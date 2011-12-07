@@ -1,17 +1,29 @@
+(***********************************************************
+     AMX VOLUME CONTROL LIBRARY
+     v0.0.1                                                
 
+     Website: https://sourceforge.net/users/amclain/[FUTURE]
+     
+     
+     This library contains the code to set up and manipulate
+     volume controls from within an AMX Netlinx project by
+     including this file.  Source code and documentation can
+     be obtained from the website listed above.
+     
+     NOTE: For the sake of consistency, "calls" are not used.
+     Instead, functions that would normally have no return
+     value return VOL_SUCCESS.
+************************************************************)
 
-
-PROGRAM_NAME='volume control'
+PROGRAM_NAME='amx-lib-volume'
 (***********************************************************)
-(***********************************************************)
-(*  FILE_LAST_MODIFIED_ON: 04/05/2006  AT: 09:00:25        *)
 (***********************************************************)
 (* System Type : NetLinx                                   *)
 (***********************************************************)
 (* REV HISTORY:                                            *)
 (***********************************************************)
 (*
-    $History: $
+    History: See version control repository or changelog.
 *)
 (***********************************************************)
 (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
@@ -23,28 +35,29 @@ DEFINE_DEVICE
 (***********************************************************)
 DEFINE_CONSTANT
 
+// Volume control mute states.
 UNMUTED	= 0;
 MUTED	= 1;
 
-
-// Return messages.
-VOL_SUCCESS		= 0;
-VOL_FAILED		= -1;
-VOL_LEVEL_LIMITED	= -2;
-VOL_PARAM_NOT_SET	= -3;
+// Function return messages.
+VOL_SUCCESS		=  0;	// Operation succeded.
+VOL_FAILED		= -1;	// Generic operation failure.
+VOL_LEVEL_LIMITED	= -2;	// Input value was limited due to min/max limit.
+VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
 
 (***********************************************************)
 (*              DATA TYPE DEFINITIONS GO BELOW             *)
 (***********************************************************)
 DEFINE_TYPE
 
+// Volume control.
 struct volume
 {
-    integer lvl;
-    char mute;
-    integer max;
-    integer min;
-    integer step;
+    integer lvl;	// Volume level.
+    char mute;		// Mute status (MUTED | UNMUTED).
+    integer max;	// Max volume level limit.  Assumed full-on ($FFFF) if not set.
+    integer min;	// Min volume level limit.  Assumed full-off ($0000) if not set.
+    integer step;	// Amount to raise/lower the volume level when incremented or decremented.
 }
 
 (***********************************************************)
@@ -68,6 +81,26 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
 
+/*
+ *  Initialize volume control.
+ */
+define_function sinteger init(volume v, integer lvl, char muteState, integer min, integer max, integer step)
+{
+    v.lvl = lvl;
+    v.mute = muteState;
+    v.min = min;
+    v.max = max;
+    v.step = step;
+    
+    return VOL_SUCCESS;
+}
+
+/*
+ *  Get volume level.
+ *  Returns integer: Current volume level.
+ *
+ *  This function takes into account mute status and min/max limits.
+ */
 define_function integer getLevel(volume v)
 {
     if (v.mute == MUTED)
@@ -90,6 +123,13 @@ define_function integer getLevel(volume v)
     }
 }
 
+/*
+ *  Get volume level.
+ *  Returns char: Current volume level.
+ *
+ *  This function takes into account mute status and min/max limits.
+ *  Return value is scaled from an integer to a byte.
+ */
 define_function char getLevelAsByte(volume v)
 {
     integer x;
@@ -97,6 +137,13 @@ define_function char getLevelAsByte(volume v)
     return type_cast (x / 256);
 }
 
+/*
+ *  Set volume level.
+ *  Returns sinteger: Status message.
+ *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
+ *
+ *  This function takes into account min/max limits.
+ */
 define_function sinteger setLevel(volume v, integer value)
 {
     if (v.max > 0 && value > v.max)
@@ -116,6 +163,14 @@ define_function sinteger setLevel(volume v, integer value)
     }
 }
 
+/*
+ *  Set volume level.
+ *  Returns sinteger: Status message.
+ *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
+ *
+ *  This function takes into account min/max limits.
+ *  Input value is scaled from a byte to an integer.
+ */
 define_function sinteger setLevelAsByte(volume v, char value)
 {
     integer x;
@@ -123,48 +178,82 @@ define_function sinteger setLevelAsByte(volume v, char value)
     return setLevel(v, x);
 }
 
+/*
+ * Set max limit.
+ * Input: value > 0 to enable, value = 0 to disable.
+ */
 define_function sinteger setMax(volume v, integer value)
 {
     v.max = value;
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set max limit.
+ *  Input: value > 0 to enable, value = 0 to disable.
+ *  
+ *  Input value is scaled from a byte to an integer.
+ */
 define_function sinteger setMaxAsByte(volume v, char value)
 {
     v.max = type_cast (value * 256);
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set minimum limit.
+ *  Input: value > 0 to enable, value = 0 to disable.
+ */
 define_function sinteger setMin(volume v, integer value)
 {
     v.min = value;
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set minimum limit.
+ *  Input: value > 0 to enable, value = 0 to disable.
+ *  
+ *  Input value is scaled from a byte to an integer.
+ */
 define_function sinteger setMinAsByte(volume v, char value)
 {
     v.min = type_cast (v.min * 256);
     return VOL_SUCCESS;
 }
 
+/*
+ *  Mute the channel.
+ */
 define_function sinteger mute(volume v)
 {
     v.mute = MUTED;
     return VOL_SUCCESS;
 }
 
+/*
+ *  Unmute the channel.
+ */
 define_function sinteger unmute(volume v)
 {
     v.mute = UNMUTED;
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the amount that the level increaes/decreses when incremented.
+ */
 define_function sinteger setStep(volume v, integer value)
 {
     v.step = value;
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the amount that the level increaes/decreses when incremented.
+ *
+ *  Input value is scaled from a byte to an integer.
+ */
 define_function sinteger setStepAsByte(volume v, char value)
 {
     integer x;
@@ -173,6 +262,11 @@ define_function sinteger setStepAsByte(volume v, char value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the number of steps the control can be incremented/decremented.
+ *
+ *  This is an alternative to defining the value of the step.
+ */
 define_function sinteger setNumSteps(volume v, integer steps)
 {
     if (steps == 0) return VOL_FAILED;
@@ -181,6 +275,11 @@ define_function sinteger setNumSteps(volume v, integer steps)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Increase the volume by incrementing the level by one step.
+ *  Returns sinteger: Status message.
+ *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
+ */
 define_function sinteger increment(volume v)
 {
     integer l;
@@ -195,6 +294,11 @@ define_function sinteger increment(volume v)
     return setLevel(v, l);
 }
 
+/*
+ *  Decrease the volume by decrementing the level by one step.
+ *  Returns sinteger: Status message.
+ *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
+ */
 define_function sinteger decrement(volume v)
 {
     integer l;
