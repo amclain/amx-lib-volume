@@ -36,8 +36,8 @@ DEFINE_DEVICE
 DEFINE_CONSTANT
 
 // Volume control mute states.
-UNMUTED	= 0;
-MUTED	= 1;
+VOL_UNMUTED	= 0;
+VOL_MUTED	= 1;
 
 // Function return messages.
 VOL_SUCCESS		=  0;	// Operation succeded.
@@ -54,7 +54,7 @@ DEFINE_TYPE
 struct volume
 {
     integer lvl;	// Volume level.
-    char mute;		// Mute status (MUTED | UNMUTED).
+    char mute;		// Mute status (VOL_MUTED | VOL_UNMUTED).
     integer max;	// Max volume level limit.  Assumed full-on ($FFFF) if not set.
     integer min;	// Min volume level limit.  Assumed full-off ($0000) if not set.
     integer step;	// Amount to raise/lower the volume level when incremented or decremented.
@@ -103,7 +103,7 @@ define_function sinteger init(volume v, integer lvl, char muteState, integer min
  */
 define_function integer getLevel(volume v)
 {
-    if (v.mute == MUTED)
+    if (v.mute == VOL_MUTED)
     {
 	return 0;
     }
@@ -143,6 +143,7 @@ define_function char getLevelAsByte(volume v)
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
  *
  *  This function takes into account min/max limits.
+ *  This function does not affect mute status.
  */
 define_function sinteger setLevel(volume v, integer value)
 {
@@ -169,6 +170,7 @@ define_function sinteger setLevel(volume v, integer value)
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
  *
  *  This function takes into account min/max limits.
+ *  This function does not affect mute status.
  *  Input value is scaled from a byte to an integer.
  */
 define_function sinteger setLevelAsByte(volume v, char value)
@@ -227,7 +229,7 @@ define_function sinteger setMinAsByte(volume v, char value)
  */
 define_function sinteger mute(volume v)
 {
-    v.mute = MUTED;
+    v.mute = VOL_MUTED;
     return VOL_SUCCESS;
 }
 
@@ -236,7 +238,7 @@ define_function sinteger mute(volume v)
  */
 define_function sinteger unmute(volume v)
 {
-    v.mute = UNMUTED;
+    v.mute = VOL_UNMUTED;
     return VOL_SUCCESS;
 }
 
