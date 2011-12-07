@@ -84,7 +84,7 @@ DEFINE_MUTUALLY_EXCLUSIVE
 /*
  *  Initialize volume control.
  */
-define_function sinteger init(volume v, integer lvl, char muteState, integer min, integer max, integer step)
+define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer step)
 {
     v.lvl = lvl;
     v.mute = muteState;
@@ -101,7 +101,7 @@ define_function sinteger init(volume v, integer lvl, char muteState, integer min
  *
  *  This function takes into account mute status and min/max limits.
  */
-define_function integer getLevel(volume v)
+define_function integer volGetLevel(volume v)
 {
     if (v.mute == VOL_MUTED)
     {
@@ -130,7 +130,7 @@ define_function integer getLevel(volume v)
  *  This function takes into account mute status and min/max limits.
  *  Return value is scaled from an integer to a byte.
  */
-define_function char getLevelAsByte(volume v)
+define_function char volGetLevelAsByte(volume v)
 {
     integer x;
     x = getLevel(v);
@@ -145,7 +145,7 @@ define_function char getLevelAsByte(volume v)
  *  This function takes into account min/max limits.
  *  This function does not affect mute status.
  */
-define_function sinteger setLevel(volume v, integer value)
+define_function sinteger volSetLevel(volume v, integer value)
 {
     if (v.max > 0 && value > v.max)
     {
@@ -173,7 +173,7 @@ define_function sinteger setLevel(volume v, integer value)
  *  This function does not affect mute status.
  *  Input value is scaled from a byte to an integer.
  */
-define_function sinteger setLevelAsByte(volume v, char value)
+define_function sinteger volSetLevelAsByte(volume v, char value)
 {
     integer x;
     x = type_cast (value * 256);
@@ -184,7 +184,7 @@ define_function sinteger setLevelAsByte(volume v, char value)
  * Set max limit.
  * Input: value > 0 to enable, value = 0 to disable.
  */
-define_function sinteger setMax(volume v, integer value)
+define_function sinteger volSetMax(volume v, integer value)
 {
     v.max = value;
     return VOL_SUCCESS;
@@ -196,7 +196,7 @@ define_function sinteger setMax(volume v, integer value)
  *  
  *  Input value is scaled from a byte to an integer.
  */
-define_function sinteger setMaxAsByte(volume v, char value)
+define_function sinteger volSetMaxAsByte(volume v, char value)
 {
     v.max = type_cast (value * 256);
     return VOL_SUCCESS;
@@ -206,7 +206,7 @@ define_function sinteger setMaxAsByte(volume v, char value)
  *  Set minimum limit.
  *  Input: value > 0 to enable, value = 0 to disable.
  */
-define_function sinteger setMin(volume v, integer value)
+define_function sinteger volSetMin(volume v, integer value)
 {
     v.min = value;
     return VOL_SUCCESS;
@@ -218,7 +218,7 @@ define_function sinteger setMin(volume v, integer value)
  *  
  *  Input value is scaled from a byte to an integer.
  */
-define_function sinteger setMinAsByte(volume v, char value)
+define_function sinteger volSetMinAsByte(volume v, char value)
 {
     v.min = type_cast (v.min * 256);
     return VOL_SUCCESS;
@@ -227,7 +227,7 @@ define_function sinteger setMinAsByte(volume v, char value)
 /*
  *  Mute the channel.
  */
-define_function sinteger mute(volume v)
+define_function sinteger volMute(volume v)
 {
     v.mute = VOL_MUTED;
     return VOL_SUCCESS;
@@ -236,7 +236,7 @@ define_function sinteger mute(volume v)
 /*
  *  Unmute the channel.
  */
-define_function sinteger unmute(volume v)
+define_function sinteger volUnmute(volume v)
 {
     v.mute = VOL_UNMUTED;
     return VOL_SUCCESS;
@@ -245,7 +245,7 @@ define_function sinteger unmute(volume v)
 /*
  *  Set the amount that the level increaes/decreses when incremented.
  */
-define_function sinteger setStep(volume v, integer value)
+define_function sinteger volSetStep(volume v, integer value)
 {
     v.step = value;
     return VOL_SUCCESS;
@@ -256,7 +256,7 @@ define_function sinteger setStep(volume v, integer value)
  *
  *  Input value is scaled from a byte to an integer.
  */
-define_function sinteger setStepAsByte(volume v, char value)
+define_function sinteger volSetStepAsByte(volume v, char value)
 {
     integer x;
     x = type_cast (value * 256);
@@ -269,7 +269,7 @@ define_function sinteger setStepAsByte(volume v, char value)
  *
  *  This is an alternative to defining the value of the step.
  */
-define_function sinteger setNumSteps(volume v, integer steps)
+define_function sinteger volSetNumSteps(volume v, integer steps)
 {
     if (steps == 0) return VOL_FAILED;
     
@@ -282,7 +282,7 @@ define_function sinteger setNumSteps(volume v, integer steps)
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
  */
-define_function sinteger increment(volume v)
+define_function sinteger volIncrement(volume v)
 {
     integer l;
     
@@ -301,7 +301,7 @@ define_function sinteger increment(volume v)
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
  */
-define_function sinteger decrement(volume v)
+define_function sinteger volDecrement(volume v)
 {
     integer l;
     
