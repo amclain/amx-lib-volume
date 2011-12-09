@@ -133,7 +133,7 @@ define_function integer volGetLevel(volume v)
 define_function char volGetLevelAsByte(volume v)
 {
     integer x;
-    x = getLevel(v);
+    x = volGetLevel(v);
     return type_cast (x / 256);
 }
 
@@ -177,7 +177,7 @@ define_function sinteger volSetLevelAsByte(volume v, char value)
 {
     integer x;
     x = type_cast (value * 256);
-    return setLevel(v, x);
+    return volSetLevel(v, x);
 }
 
 /*
@@ -288,12 +288,12 @@ define_function sinteger volIncrement(volume v)
     
     if (v.step <= 0) return VOL_PARAM_NOT_SET;
     
-    l = getLevel(v) + v.step;
+    l = volGetLevel(v) + v.step;
     
     // Compensate for integer boundry wrap.
-    if (l < getLevel(v)) l = $FFFF;
+    if (l < volGetLevel(v)) l = $FFFF;
     
-    return setLevel(v, l);
+    return volSetLevel(v, l);
 }
 
 /*
@@ -307,12 +307,12 @@ define_function sinteger volDecrement(volume v)
     
     if (v.step <= 0) return VOL_PARAM_NOT_SET;
     
-    l = getLevel(v) - v.step;
+    l = volGetLevel(v) - v.step;
     
     // Compensate for integer boundry wrap.
-    if (l > getLevel(v)) l = $0000;
+    if (l > volGetLevel(v)) l = $0000;
     
-    return setLevel(v, l);
+    return volSetLevel(v, l);
 }
 
 (***********************************************************)
