@@ -337,6 +337,189 @@ define_function sinteger volDecrement(volume v)
 }
 
 (***********************************************************)
+(*                    ARRAY FUNCTIONS                      *)
+(***********************************************************)
+
+define_function sinteger volInitArray(volume v[], integer lvl, char muteState, integer min, integer max, integer numSteps)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volInit(v[i], lvl, muteState, min, max, numSteps);
+    }
+    
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayLevel(volume v[], integer value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetLevel(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayLevelAsByte(volume v[], char value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetLevelAsByte(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayMax(volume v[], integer value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetMax(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayMaxAsByte(volume v[] char value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetMaxAsByte(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayMin(volume v[], integer value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetMin(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayMinAsByte(volume v[], char value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetMinAsByte(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayStep(volume v[], integer value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetStep(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayStepAsByte(volume v[], char value)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetStepAsByte(v[i], value);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volSetArrayNumSteps(volume v[], integer steps)
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volSetNumSteps(v[i], steps);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volMuteArray(volume v[])
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volMute(v[i]);
+    }
+    
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volUnmuteArray(volume v[])
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volUnmute(v[i]);
+    }
+    
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volIncrementArray(volume v[])
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volIncrement(v[i]);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+define_function sinteger volDecrementArray(volume v[])
+{
+    integer i;
+    
+    for(i = 0; i < length_array(v); i++)
+    {
+	volDecrement(v[i]);
+    }
+    
+    // TODO: Handle return value.
+    return VOL_SUCCESS;
+}
+
+(***********************************************************)
 (*                STARTUP CODE GOES BELOW                  *)
 (***********************************************************)
 DEFINE_START
