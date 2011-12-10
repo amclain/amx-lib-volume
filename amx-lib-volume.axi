@@ -84,13 +84,14 @@ DEFINE_MUTUALLY_EXCLUSIVE
 /*
  *  Initialize volume control.
  */
-define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer step)
+define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
     v.lvl = 0;
     v.mute = muteState;
     v.min = min;
     v.max = max;
-    v.step = step;
+    
+    if (numSteps > 0) volSetNumSteps(v, numSteps);
     
     volSetLevel(v, lvl); // Will limit the volume to min/max range.
     
