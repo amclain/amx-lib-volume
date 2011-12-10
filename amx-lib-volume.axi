@@ -1,18 +1,33 @@
 (***********************************************************
-     AMX VOLUME CONTROL LIBRARY
-     v0.1.0
+    AMX VOLUME CONTROL LIBRARY
+    v0.1.0
 
-     Website: https://sourceforge.net/users/amclain/[FUTURE]
-     
-     
-     This library contains the code to set up and manipulate
-     volume controls from within an AMX Netlinx project by
-     including this file.  Source code and documentation can
-     be obtained from the website listed above.
-     
-     NOTE: For the sake of consistency, "calls" are not used.
-     Instead, functions that would normally have no return
-     value return VOL_SUCCESS.
+    Website: https://sourceforge.net/users/amclain/[FUTURE]
+    
+    
+    This library contains the code to set up and manipulate
+    volume controls from within an AMX Netlinx project by
+    including this file.  Source code and documentation can
+    be obtained from the website listed above.
+    
+    NOTE: For the sake of consistency, "calls" are not used.
+    Instead, functions that would normally have no return
+    value return VOL_SUCCESS.
+    
+*************************************************************
+    Copyright 2011 Alex McLain
+    
+    Licensed under the Apache License, Version 2.0 (the "License");
+    you may not use this file except in compliance with the License.
+    You may obtain a copy of the License at
+
+     http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
 ************************************************************)
 
 PROGRAM_NAME='amx-lib-volume'

@@ -1,21 +1,21 @@
 (***********************************************************
-     AMX VOLUME CONTROL
-     BASIC EXAMPLE PROGRAM
-
-     Website: https://sourceforge.net/users/amclain/[FUTURE]
-     
-     
-     This application demonstrates a basic example of the
-     amx-lib-volume library.  The project initializes a
-     volume control and responds to level up/down commands
-     initiated from the I/O port.
-     
-     Volume control operation can be viewed by watching the
-     master's internal diagnostic output.
-     
-     I/O PORT CONNECTIONS:
-     Ch 1: Volume Up Button
-     Ch 2: Volume Down Button
+    AMX VOLUME CONTROL
+    BASIC EXAMPLE PROGRAM
+    
+    Website: https://sourceforge.net/users/amclain/[FUTURE]
+    
+    
+    This application demonstrates a basic example of the
+    amx-lib-volume library.  The project initializes a
+    volume control and responds to level up/down commands
+    initiated from the I/O port.
+    
+    Volume control operation can be viewed by watching the
+    master's internal diagnostic output.
+    
+    I/O PORT CONNECTIONS:
+    Ch 1: Volume Up Button
+    Ch 2: Volume Down Button
 ************************************************************)
 
 PROGRAM_NAME='volume test'
