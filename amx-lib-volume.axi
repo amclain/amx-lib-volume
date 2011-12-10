@@ -5,6 +5,8 @@
     Website: https://sourceforge.net/users/amclain/[FUTURE]
     
     
+ -- THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH AMX --
+    
     This library contains the code to set up and manipulate
     volume controls from within an AMX Netlinx project by
     including this file.  Source code and documentation can
@@ -13,7 +15,6 @@
     NOTE: For the sake of consistency, "calls" are not used.
     Instead, functions that would normally have no return
     value return VOL_SUCCESS.
-    
 *************************************************************
     Copyright 2011 Alex McLain
     
