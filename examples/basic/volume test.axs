@@ -2,7 +2,7 @@
     AMX VOLUME CONTROL
     BASIC EXAMPLE PROGRAM
     
-    Website: https://sourceforge.net/users/amclain/[FUTURE]
+    Website: https://sourceforge.net/projects/amx-lib-volume/
     
     
     This application demonstrates a basic example of the
