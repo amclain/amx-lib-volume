@@ -1,6 +1,6 @@
 (***********************************************************
      AMX VOLUME CONTROL LIBRARY
-     v0.0.1                                                
+     v0.1.0
 
      Website: https://sourceforge.net/users/amclain/[FUTURE]
      
@@ -23,7 +23,7 @@ PROGRAM_NAME='amx-lib-volume'
 (* REV HISTORY:                                            *)
 (***********************************************************)
 (*
-    History: See version control repository or changelog.
+    History: See version control repository.
 *)
 (***********************************************************)
 (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
