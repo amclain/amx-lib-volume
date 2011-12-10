@@ -391,7 +391,7 @@ define_function sinteger volSetArrayMax(volume v[], integer value)
     return VOL_SUCCESS;
 }
 
-define_function sinteger volSetArrayMaxAsByte(volume v[] char value)
+define_function sinteger volSetArrayMaxAsByte(volume v[], char value)
 {
     integer i;
     
