@@ -104,19 +104,19 @@
        <!ELEMENT Notes (#PCDATA)>
 ]>
 
-<Workspace CurrentVersion="3.3"><Identifier>volume-test</Identifier>
+<Workspace CurrentVersion="3.3"><Identifier>volume basic</Identifier>
 <CreateVersion>3.3</CreateVersion>
 <PJS_File></PJS_File>
 <PJS_ConvertDate></PJS_ConvertDate>
 <PJS_CreateDate></PJS_CreateDate>
 <Comments></Comments>
-<Project><Identifier>volume test</Identifier>
+<Project><Identifier>volume basic</Identifier>
 <Designer></Designer>
 <DealerID></DealerID>
 <SalesOrder></SalesOrder>
 <PurchaseOrder></PurchaseOrder>
 <Comments></Comments>
-<System IsActive="true" Platform="Netlinx" Transport="TCPIP"><Identifier>volume test</Identifier>
+<System IsActive="true" Platform="Netlinx" Transport="TCPIP"><Identifier>volume basic</Identifier>
 <SysID>0</SysID>
 <TransSerial>COM5,38400,8,None,1,None</TransSerial>
 <TransModem>COM1,38400,8,None,1,None</TransModem>
@@ -131,11 +131,11 @@
 <Password></Password>
 <Comments></Comments>
 <File CompileType="None" Type="Include"><Identifier>amx-lib-volume</Identifier>
-<FilePathName>amx-lib-vol\amx-lib-volume.axi</FilePathName>
+<FilePathName>..\..\amx-lib-volume.axi</FilePathName>
 <Comments></Comments>
 </File>
-<File CompileType="Netlinx" Type="MasterSrc"><Identifier>volume test</Identifier>
-<FilePathName>volume test.axs</FilePathName>
+<File CompileType="Netlinx" Type="MasterSrc"><Identifier>volume-basic</Identifier>
+<FilePathName>volume-basic.axs</FilePathName>
 <Comments></Comments>
 </File>
 </System>
