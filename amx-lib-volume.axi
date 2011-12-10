@@ -355,14 +355,14 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
 
 define_function integer volGetIndexLevel(volume v[], integer index)
 {
-    if (index >= length_array(v)) return VOL_OUT_OF_BOUNDS;
+    if (index > length_array(v)) return 0;
     
     return volGetLevel(v[index]);
 }
 
 define_function char volGetIndexLevelAsByte(volume v[], integer index)
 {
-    if (index >= length_array(v)) return VOL_OUT_OF_BOUNDS;
+    if (index > length_array(v)) return 0;
     
     return volGetLevelAsByte(v[index]);
 }
