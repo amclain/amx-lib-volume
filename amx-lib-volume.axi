@@ -275,7 +275,7 @@ define_function sinteger volSetNumSteps(volume v, integer steps)
 {
     if (steps == 0) return VOL_FAILED;
     
-    v.step = $FFFF / steps;
+    v.step = (v.max - v.min) / steps;
     return VOL_SUCCESS;
 }
 
