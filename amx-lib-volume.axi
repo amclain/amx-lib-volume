@@ -86,11 +86,13 @@ DEFINE_MUTUALLY_EXCLUSIVE
  */
 define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer step)
 {
-    v.lvl = lvl;
+    v.lvl = 0;
     v.mute = muteState;
     v.min = min;
     v.max = max;
     v.step = step;
+    
+    volSetLevel(v, lvl); // Will limit the volume to min/max range.
     
     return VOL_SUCCESS;
 }
