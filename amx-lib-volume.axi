@@ -5,7 +5,9 @@
     Website: https://sourceforge.net/projects/amx-lib-volume/
     
     
- -- THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH AMX --
+ -- THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH --
+ --                   THE AMX ORGANIZATION                   --
+    
     
     This library contains the code to set up and manipulate
     volume controls from within an AMX Netlinx project by
