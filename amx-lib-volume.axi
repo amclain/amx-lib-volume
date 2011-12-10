@@ -99,6 +99,8 @@ DEFINE_MUTUALLY_EXCLUSIVE
 
 /*
  *  Initialize volume control.
+ *
+ *  Parameters min, max, and numSteps can be set to 0 if not needed.
  */
 define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
