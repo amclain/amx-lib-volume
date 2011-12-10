@@ -60,6 +60,7 @@ VOL_SUCCESS		=  0;	// Operation succeded.
 VOL_FAILED		= -1;	// Generic operation failure.
 VOL_LEVEL_LIMITED	= -2;	// Input value was limited due to min/max limit.
 VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
+VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.
 
 (***********************************************************)
 (*              DATA TYPE DEFINITIONS GO BELOW             *)
@@ -350,6 +351,20 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
     }
     
     return VOL_SUCCESS;
+}
+
+define_function integer volGetIndexLevel(volume v[], integer index)
+{
+    if (index >= length_array(v)) return VOL_OUT_OF_BOUNDS;
+    
+    return volGetLevel(v[index]);
+}
+
+define_function char volGetIndexLevelAsByte(volume v[], integer index)
+{
+    if (index >= length_array(v)) return VOL_OUT_OF_BOUNDS;
+    
+    return volGetLevelAsByte(v[index]);
 }
 
 define_function sinteger volSetArrayLevel(volume v[], integer value)
