@@ -341,6 +341,11 @@ define_function sinteger volDecrement(volume v)
 (*                    ARRAY FUNCTIONS                      *)
 (***********************************************************)
 
+/*
+ *  Initialize an array of volume controls.
+ *  
+ *  Parameters min, max, and numSteps can be set to 0 if not needed.
+ */
 define_function sinteger volInitArray(volume v[], integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
     integer i;
@@ -353,6 +358,12 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
     return VOL_SUCCESS;
 }
 
+/*
+ *  Get the volume level for a control in an array at the given index.
+ *  Returns integer: Current volume level.
+ *
+ *  This function takes into account mute status and min/max limits.
+ */
 define_function integer volGetIndexLevel(volume v[], integer index)
 {
     if (index > length_array(v)) return 0;
@@ -360,6 +371,13 @@ define_function integer volGetIndexLevel(volume v[], integer index)
     return volGetLevel(v[index]);
 }
 
+/*
+ *  Get the volume level for a control in an array at the given index.
+ *  Returns char: Current volume level.
+ *
+ *  This function takes into account mute status and min/max limits.
+ *  Return value is scaled from an integer to a byte.
+ */
 define_function char volGetIndexLevelAsByte(volume v[], integer index)
 {
     if (index > length_array(v)) return 0;
@@ -367,6 +385,9 @@ define_function char volGetIndexLevelAsByte(volume v[], integer index)
     return volGetLevelAsByte(v[index]);
 }
 
+/*
+ *  Set the volume level for all controls in an array.
+ */
 define_function sinteger volSetArrayLevel(volume v[], integer value)
 {
     integer i;
@@ -380,6 +401,9 @@ define_function sinteger volSetArrayLevel(volume v[], integer value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the volume level for all controls in an array.
+ */
 define_function sinteger volSetArrayLevelAsByte(volume v[], char value)
 {
     integer i;
@@ -393,6 +417,9 @@ define_function sinteger volSetArrayLevelAsByte(volume v[], char value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the max volume limit for all controls in an array.
+ */
 define_function sinteger volSetArrayMax(volume v[], integer value)
 {
     integer i;
@@ -406,6 +433,9 @@ define_function sinteger volSetArrayMax(volume v[], integer value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the max volume limit for all controls in an array.
+ */
 define_function sinteger volSetArrayMaxAsByte(volume v[], char value)
 {
     integer i;
@@ -419,6 +449,9 @@ define_function sinteger volSetArrayMaxAsByte(volume v[], char value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the min volume limit for all controls in an array.
+ */
 define_function sinteger volSetArrayMin(volume v[], integer value)
 {
     integer i;
@@ -432,6 +465,9 @@ define_function sinteger volSetArrayMin(volume v[], integer value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the min volume limit for all controls in an array.
+ */
 define_function sinteger volSetArrayMinAsByte(volume v[], char value)
 {
     integer i;
@@ -445,6 +481,9 @@ define_function sinteger volSetArrayMinAsByte(volume v[], char value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the volume step amount for all controls in an array.
+ */
 define_function sinteger volSetArrayStep(volume v[], integer value)
 {
     integer i;
@@ -458,6 +497,9 @@ define_function sinteger volSetArrayStep(volume v[], integer value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the volume step amount for all controls in an array.
+ */
 define_function sinteger volSetArrayStepAsByte(volume v[], char value)
 {
     integer i;
@@ -471,6 +513,10 @@ define_function sinteger volSetArrayStepAsByte(volume v[], char value)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Set the number of steps all controls in the array can be
+ *  incremented or decremented.
+ */
 define_function sinteger volSetArrayNumSteps(volume v[], integer steps)
 {
     integer i;
@@ -484,6 +530,9 @@ define_function sinteger volSetArrayNumSteps(volume v[], integer steps)
     return VOL_SUCCESS;
 }
 
+/*
+ *  Mute all of the controls in the array.
+ */
 define_function sinteger volMuteArray(volume v[])
 {
     integer i;
@@ -496,6 +545,9 @@ define_function sinteger volMuteArray(volume v[])
     return VOL_SUCCESS;
 }
 
+/*
+ *  Unmute all of the controls in the array.
+ */
 define_function sinteger volUnmuteArray(volume v[])
 {
     integer i;
@@ -508,6 +560,10 @@ define_function sinteger volUnmuteArray(volume v[])
     return VOL_SUCCESS;
 }
 
+/*
+ *  Increase the volume of all controls in the array
+ *  by one step.
+ */
 define_function sinteger volIncrementArray(volume v[])
 {
     integer i;
@@ -521,6 +577,10 @@ define_function sinteger volIncrementArray(volume v[])
     return VOL_SUCCESS;
 }
 
+/*
+ *  Decrease the volume of all controls in the array
+ *  by one step.
+ */
 define_function sinteger volDecrementArray(volume v[])
 {
     integer i;
