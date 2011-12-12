@@ -352,7 +352,7 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volInit(v[i], lvl, muteState, min, max, numSteps);
     }
@@ -368,7 +368,7 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
  */
 define_function integer volGetIndexLevel(volume v[], integer index)
 {
-    if (index > length_array(v)) return 0;
+    if (index > max_length_array(v)) return 0;
     
     return volGetLevel(v[index]);
 }
@@ -382,7 +382,7 @@ define_function integer volGetIndexLevel(volume v[], integer index)
  */
 define_function char volGetIndexLevelAsByte(volume v[], integer index)
 {
-    if (index > length_array(v)) return 0;
+    if (index > max_length_array(v)) return 0;
     
     return volGetLevelAsByte(v[index]);
 }
@@ -394,7 +394,7 @@ define_function sinteger volSetArrayLevel(volume v[], integer value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetLevel(v[i], value);
     }
@@ -410,7 +410,7 @@ define_function sinteger volSetArrayLevelAsByte(volume v[], char value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetLevelAsByte(v[i], value);
     }
@@ -426,7 +426,7 @@ define_function sinteger volSetArrayMax(volume v[], integer value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetMax(v[i], value);
     }
@@ -442,7 +442,7 @@ define_function sinteger volSetArrayMaxAsByte(volume v[], char value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetMaxAsByte(v[i], value);
     }
@@ -458,7 +458,7 @@ define_function sinteger volSetArrayMin(volume v[], integer value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetMin(v[i], value);
     }
@@ -474,7 +474,7 @@ define_function sinteger volSetArrayMinAsByte(volume v[], char value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetMinAsByte(v[i], value);
     }
@@ -490,7 +490,7 @@ define_function sinteger volSetArrayStep(volume v[], integer value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetStep(v[i], value);
     }
@@ -506,7 +506,7 @@ define_function sinteger volSetArrayStepAsByte(volume v[], char value)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetStepAsByte(v[i], value);
     }
@@ -523,7 +523,7 @@ define_function sinteger volSetArrayNumSteps(volume v[], integer steps)
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volSetNumSteps(v[i], steps);
     }
@@ -539,7 +539,7 @@ define_function sinteger volMuteArray(volume v[])
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volMute(v[i]);
     }
@@ -554,7 +554,7 @@ define_function sinteger volUnmuteArray(volume v[])
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volUnmute(v[i]);
     }
@@ -570,7 +570,7 @@ define_function sinteger volIncrementArray(volume v[])
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volIncrement(v[i]);
     }
@@ -587,7 +587,7 @@ define_function sinteger volDecrementArray(volume v[])
 {
     integer i;
     
-    for(i = 0; i < length_array(v); i++)
+    for(i = 1; i <= max_length_array(v); i++)
     {
 	volDecrement(v[i]);
     }
