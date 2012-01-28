@@ -6,8 +6,6 @@
     
     
     These functions test the library's functionality.
-    
-    "GO" button connected on IO 1.
 ************************************************************)
 
 PROGRAM_NAME='volume-testes'
@@ -26,14 +24,12 @@ PROGRAM_NAME='volume-testes'
 
 // Include the volume control library.
 #include 'amx-lib-volume'
+#include 'amx-test-suite'
 
 (***********************************************************)
 (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
 (***********************************************************)
 DEFINE_DEVICE
-
-dvDebug		= 0:0:0;	// Debug output.
-dvIO		= 5001:9:0;
 
 (***********************************************************)
 (*               CONSTANT DEFINITIONS GO BELOW             *)
@@ -49,9 +45,6 @@ DEFINE_TYPE
 (*               VARIABLE DEFINITIONS GO BELOW             *)
 (***********************************************************)
 DEFINE_VARIABLE
-
-volume v1;
-volume v2[8];
 
 (***********************************************************)
 (*               LATCHING DEFINITIONS GO BELOW             *)
@@ -80,14 +73,31 @@ DEFINE_START
 DEFINE_EVENT
 
 // RUN TESTS
-button_event[dvIO, 1]
+define_function testRun()
 {
-    PUSH:
-    {
-	send_string dvDebug, "'== TESTING: volInit() =='";
-	
-	
-    }
+    // List tests here.
+    testVolInit();
+}
+
+// Test initialization.
+define_function testVolInit()
+{
+    volume v;
+    integer step;
+    
+    // Normal initialization.
+    step = 5;
+    volInit(v, 15000, VOL_MUTED, 10000, 30000, step);
+    
+    assert(v.lvl == 15000, 'Init volume level.');
+    assert(v.mute == VOL_MUTED, 'Init volume mute.');
+    assert(v.min == 10000, 'Init min limit.');
+    assert(v.max == 30000, 'Init max limit.');
+    assert(v.step == ((v.max - v.min) / step), 'Init volume steps.');
+    
+    // Level exceeds max limit.
+    
+    // Level below min limit.
 }
 
 (***********************************************************)
