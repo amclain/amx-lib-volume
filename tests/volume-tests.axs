@@ -8,7 +8,7 @@
     These functions test the library's functionality.
 ************************************************************)
 
-PROGRAM_NAME='volume-testes'
+PROGRAM_NAME='volume-tests'
 (***********************************************************)
 (***********************************************************)
 (* System Type : NetLinx                                   *)
@@ -85,7 +85,12 @@ define_function testSuiteRun()
     testVolIncDec();
     
     // Array tests.
-    
+    testVolInitArray();
+    testVolArrayGetLevel();
+    testVolArraySetLevel();
+    testVolArrayMinMax();
+    testVolArrayStep();
+    testVolArrayMute();
 }
 
 // Test volume control initialization.
@@ -360,6 +365,149 @@ define_function testVolIncDec()
     result = volDecrement(v);
     assert(result == VOL_PARAM_NOT_SET, 'Decrement returns param not set.');
     assert(v.lvl == 4000, 'Volume not adjusted.');
+}
+
+(***********************************************************)
+(*                 TEST ARRAY FUNCTIONS                    *)
+(***********************************************************)
+
+// Test array initialization.
+define_function testVolInitArray()
+{
+    volume v[8];
+    
+    // Initialize array and assert random indexes.
+    volInitArray(v, 15000, VOL_MUTED, 10000, 20000, 5);
+    
+    assert(v[6].lvl == 15000, 'Init array level.');
+    assert(v[5].mute == VOL_MUTED, 'Init array mute state.');
+    assert(v[4].min == 10000, 'Init array min level.');
+    assert(v[3].max == 20000, 'Init array max level.');
+    assert(v[2].step == (20000 - 10000) / 5, 'Init array step.');
+}
+
+// Test array return levels.
+define_function testVolArrayGetLevel()
+{
+    volume v[8];
+    
+    volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    v[1].lvl = 11000;
+    v[2].lvl = 12000;
+    v[3].lvl = 13000;
+    v[4].lvl = 14000;
+    v[5].lvl = 15000;
+    v[6].lvl = 16000;
+    v[7].lvl = 17000;
+    v[8].lvl = 18000;
+    
+    assert(volGetIndexLevel(v, 7) == 17000, 'Get index volume.');
+    assert(volGetIndexLevelAsByte(v, 3) == (13000 / 256), 'Get index volume as byte.');
+}
+
+// Test array set levels.
+define_function testVolArraySetLevel()
+{
+    volume v[8];
+    
+    volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    volSetArrayLevel(v, 16000);
+    assert(v[6].lvl == 16000, 'Set array levels.');
+    
+    volSetArrayLevelAsByte(v, 70);
+    assert(v[3].lvl == (70 * 256), 'Set array levels as byte.');
+}
+
+// Test array set min/max limits.
+define_function testVolArrayMinMax()
+{
+    volume v[8];
+    
+    volInitArray(v, 0, VOL_UNMUTED, 0, 0, 0);
+    
+    // Set max.
+    volSetArrayMax(v, 40000);
+    assert(v[5].max == 40000, 'Set array max limit.');
+    
+    // Set max as byte.
+    volSetArrayMaxAsByte(v, 195);
+    assert(v[8].max == (195 * 256), 'Set array max limit as byte.');
+    
+    // Set min.
+    volSetArrayMin(v, 5000);
+    assert(v[2].min == 5000, 'Set array min limit.');
+    
+    // Set min as byte.
+    volSetArrayMinAsByte(v, 10);
+    assert(v[1].min == (10 * 256), 'Set array min limit as byte.');
+}
+
+// Test array set step.
+define_function testVolArrayStep()
+{
+    volume v[8];
+    
+    volInitArray(v, 0, VOL_UNMUTED, 10000, 20000, 0);
+    
+    // Set step.
+    volSetArrayStep(v, 100);
+    assert(v[7].step == 100, 'Set array step.');
+    
+    // Set step as byte.
+    volSetArrayStepAsByte(v, 2);
+    assert(v[3].step == (2 * 256), 'Set array step as byte.');
+    
+    // Set number of steps.
+    volSetArrayNumSteps(v, 5);
+    assert(v[5].step == 2000, 'Set array number of steps.');
+}
+
+// Test array mute.
+define_function testVolArrayMute()
+{
+    volume v[8];
+    
+    volInitArray(v, 0, VOL_UNMUTED, 0, 0, 0);
+    
+    // Mute array.
+    volMuteArray(v);
+    assert(v[6].mute == VOL_MUTED, 'Mute array.');
+    
+    // Unmute array.
+    volUnmuteArray(v);
+    assert(v[4].mute == VOL_UNMUTED, 'Unmute array.');
+}
+
+// Test array increment/decrement.
+define_function testVolArrayIncDec()
+{
+    volume v[8];
+    
+    volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    // Increment.
+    volIncrementArray(v);
+    assert(v[8].lvl == 16000, 'Increment array.');
+    
+    // Decrement.
+    volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    volDecrementArray(v);
+    assert(v[1].lvl == 12000, 'Decrement array.');
+    
+    // Increment hits max limit.
+    volInitArray(v, 19000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    volIncrementArray(v);
+    assert(v[5].lvl == 20000, 'Increment array hits max limit.');
+    
+    // Decrement hits min limit.
+    volInitArray(v, 11000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    volDecrementArray(v);
+    assert(v[4].lvl == 10000, 'Decrement array hits min limit.');
 }
 
 (***********************************************************)
