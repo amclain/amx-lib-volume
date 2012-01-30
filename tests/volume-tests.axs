@@ -91,6 +91,7 @@ define_function testSuiteRun()
     testVolArrayMinMax();
     testVolArrayStep();
     testVolArrayMute();
+    testVolArrayIncDec();
 }
 
 // Test volume control initialization.
@@ -251,7 +252,6 @@ define_function testVolSetMinMax()
     assert(v.min == 40000, 'Set min limit.');
     
     volSetMinAsByte(v, 40);
-    //testSuitePrint("'Min limit: ', itoa(v.min)"); // DEBUG
     assert(v.min == (40 * 256), 'Set min limit as byte.');
 }
 
