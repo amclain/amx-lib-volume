@@ -135,7 +135,7 @@
 <Comments></Comments>
 </File>
 <File CompileType="None" Type="Include"><Identifier>amx-test-suite</Identifier>
-<FilePathName>amx-test-suite.axi</FilePathName>
+<FilePathName>amx-test-suite\amx-test-suite.axi</FilePathName>
 <Comments></Comments>
 </File>
 <File CompileType="Netlinx" Type="MasterSrc"><Identifier>volume-tests</Identifier>
