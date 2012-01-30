@@ -112,7 +112,13 @@ define_function sinteger volInit(volume v, integer lvl, char muteState, integer 
     v.min = min;
     v.max = max;
     
-    if (numSteps > 0) volSetNumSteps(v, numSteps);
+    if (numSteps > 0) {
+	volSetNumSteps(v, numSteps);
+    }
+    else
+    {
+	v.step = 0;
+    }
     
     volSetLevel(v, lvl); // Will limit the volume to min/max range.
     
@@ -244,7 +250,7 @@ define_function sinteger volSetMin(volume v, integer value)
  */
 define_function sinteger volSetMinAsByte(volume v, char value)
 {
-    v.min = type_cast (v.min * 256);
+    v.min = type_cast (value * 256);
     return VOL_SUCCESS;
 }
 
