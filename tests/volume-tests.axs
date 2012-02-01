@@ -19,60 +19,19 @@ PROGRAM_NAME='volume-tests'
     History: See version control repository.
 *)
 (***********************************************************)
-(*                   INCLUDES GO BELOW                     *)
+(*                    INCLUDES GO BELOW                    *)
 (***********************************************************)
+
+#include 'amx-test-suite'
 
 // Include the volume control library.
 #include 'amx-lib-volume'
-#include 'amx-test-suite'
 
 (***********************************************************)
-(*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
-(***********************************************************)
-DEFINE_DEVICE
-
-(***********************************************************)
-(*               CONSTANT DEFINITIONS GO BELOW             *)
-(***********************************************************)
-DEFINE_CONSTANT
-
-(***********************************************************)
-(*              DATA TYPE DEFINITIONS GO BELOW             *)
-(***********************************************************)
-DEFINE_TYPE
-
-(***********************************************************)
-(*               VARIABLE DEFINITIONS GO BELOW             *)
-(***********************************************************)
-DEFINE_VARIABLE
-
-(***********************************************************)
-(*               LATCHING DEFINITIONS GO BELOW             *)
-(***********************************************************)
-DEFINE_LATCHING
-
-(***********************************************************)
-(*       MUTUALLY EXCLUSIVE DEFINITIONS GO BELOW           *)
+(*                TEST DEFINITIONS GO BELOW                *)
 (***********************************************************)
 DEFINE_MUTUALLY_EXCLUSIVE
 
-(***********************************************************)
-(*        SUBROUTINE/FUNCTION DEFINITIONS GO BELOW         *)
-(***********************************************************)
-(* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
-(* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
-
-(***********************************************************)
-(*                STARTUP CODE GOES BELOW                  *)
-(***********************************************************)
-DEFINE_START
-
-(***********************************************************)
-(*                THE EVENTS GO BELOW                      *)
-(***********************************************************)
-DEFINE_EVENT
-
-// RUN TESTS
 define_function testSuiteRun()
 {
     // Single control tests.
@@ -512,12 +471,6 @@ define_function testVolArrayIncDec()
 }
 
 (***********************************************************)
-(*            THE ACTUAL PROGRAM GOES BELOW                *)
-(***********************************************************)
-DEFINE_PROGRAM
-
-(***********************************************************)
 (*                     END OF PROGRAM                      *)
-(*        DO NOT PUT ANY CODE BELOW THIS COMMENT           *)
+(*          DO NOT PUT ANY CODE BELOW THIS COMMENT         *)
 (***********************************************************)
-

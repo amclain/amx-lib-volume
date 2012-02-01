@@ -44,12 +44,12 @@ PROGRAM_NAME='amx-lib-volume'
     History: See changelog.txt or version control repository.
 *)
 (***********************************************************)
-(*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
+(*           DEVICE NUMBER DEFINITIONS GO BELOW            *)
 (***********************************************************)
 DEFINE_DEVICE
 
 (***********************************************************)
-(*               CONSTANT DEFINITIONS GO BELOW             *)
+(*              CONSTANT DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_CONSTANT
 
@@ -80,22 +80,22 @@ struct volume
 }
 
 (***********************************************************)
-(*               VARIABLE DEFINITIONS GO BELOW             *)
+(*              VARIABLE DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_VARIABLE
 
 (***********************************************************)
-(*               LATCHING DEFINITIONS GO BELOW             *)
+(*              LATCHING DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_LATCHING
 
 (***********************************************************)
-(*       MUTUALLY EXCLUSIVE DEFINITIONS GO BELOW           *)
+(*         MUTUALLY EXCLUSIVE DEFINITIONS GO BELOW         *)
 (***********************************************************)
 DEFINE_MUTUALLY_EXCLUSIVE
 
 (***********************************************************)
-(*        SUBROUTINE/FUNCTION DEFINITIONS GO BELOW         *)
+(*         SUBROUTINE/FUNCTION DEFINITIONS GO BELOW        *)
 (***********************************************************)
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
@@ -603,22 +603,21 @@ define_function sinteger volDecrementArray(volume v[])
 }
 
 (***********************************************************)
-(*                STARTUP CODE GOES BELOW                  *)
+(*                 STARTUP CODE GOES BELOW                 *)
 (***********************************************************)
 DEFINE_START
 
 (***********************************************************)
-(*                THE EVENTS GO BELOW                      *)
+(*                   THE EVENTS GO BELOW                   *)
 (***********************************************************)
 DEFINE_EVENT
 
 (***********************************************************)
-(*            THE ACTUAL PROGRAM GOES BELOW                *)
+(*                 THE MAINLINE GOES BELOW                 *)
 (***********************************************************)
 DEFINE_PROGRAM
 
 (***********************************************************)
 (*                     END OF PROGRAM                      *)
-(*        DO NOT PUT ANY CODE BELOW THIS COMMENT           *)
+(*          DO NOT PUT ANY CODE BELOW THIS COMMENT         *)
 (***********************************************************)
-
