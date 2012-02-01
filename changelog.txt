@@ -1,3 +1,10 @@
+Release 0.1.1
+-------------
+* Fixed bug which caused volInit() to skip reinitializing the step on an already initialized control.
+* Fixed bug causing a call to volSetMinAsByte() to do nothing.
+* Library passes unit tests.
+
+
 Release 0.1.0
 -------------
 * Initial alpha release, not fully tested.
