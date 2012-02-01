@@ -41,7 +41,7 @@ PROGRAM_NAME='amx-lib-volume'
 (* REV HISTORY:                                            *)
 (***********************************************************)
 (*
-    History: See version control repository.
+    History: See changelog.txt or version control repository.
 *)
 (***********************************************************)
 (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
