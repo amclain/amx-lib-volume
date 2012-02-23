@@ -310,6 +310,28 @@ define_function testVolIncDec()
     assert(v.lvl == $0000, 'Decrement does not roll over integer.');
     assert(result == VOL_SUCCESS, 'Decrement returns success.');
     
+    // Increment is not affected by mute.
+    v.mute = VOL_MUTED;
+    v.lvl = 10000;
+    result = $1000
+    
+    result = volIncrement(v);
+    assert(v.lvl == 12000, 'Increment is not affected by mute.');
+    assert(result == VOL_SUCCESS, 'Increment returns success.');
+    
+    v.mute = VOL_UNMUTED;
+    
+    // Decrement is not affected by mute.
+    v.mute = VOL_MUTED;
+    v.lvl = 10000;
+    result = $1000
+    
+    result = volDecrement(v);
+    assert(v.lvl == 8000, 'Decrement is not affected by mute.');
+    assert(result == VOL_SUCCESS, 'Decrement returns success.');
+    
+    v.mute = VOL_UNMUTED;
+    
     // Return error if step not set.
     v.lvl = 2000;
     v.step = 0;

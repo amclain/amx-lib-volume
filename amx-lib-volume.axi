@@ -360,6 +360,7 @@ define_function sinteger volSetNumSteps(volume v, integer steps)
 
 /*
  *  Increase the volume by incrementing the level by one step.
+ *  Is not affected by mute state.
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
  */
@@ -369,16 +370,17 @@ define_function sinteger volIncrement(volume v)
     
     if (v.step <= 0) return VOL_PARAM_NOT_SET;
     
-    l = volGetLevel(v) + v.step;
+    l = v.lvl + v.step;
     
     // Compensate for integer boundry wrap.
-    if (l < volGetLevel(v)) l = $FFFF;
+    if (l < v.lvl) l = $FFFF;
     
     return volSetLevel(v, l);
 }
 
 /*
  *  Decrease the volume by decrementing the level by one step.
+ *  Is not affected by mute state.
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
  */
@@ -388,10 +390,10 @@ define_function sinteger volDecrement(volume v)
     
     if (v.step <= 0) return VOL_PARAM_NOT_SET;
     
-    l = volGetLevel(v) - v.step;
+    l = v.lvl - v.step;
     
     // Compensate for integer boundry wrap.
-    if (l > volGetLevel(v)) l = $0000;
+    if (l > v.lvl) l = $0000;
     
     return volSetLevel(v, l);
 }
