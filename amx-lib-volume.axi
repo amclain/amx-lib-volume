@@ -154,6 +154,27 @@ define_function integer volGetLevel(volume v)
 }
 
 /*
+ *  Get pre-mute volume level.
+ *  Returns integer: Current volume level.
+ *
+ *  This function ignores mute status but respects min/max limits.
+ */
+define_function integer volGetLevelPreMute(volume v)
+{
+    if (v.max > 0 && v.lvl > v.max)
+    {
+	return v.max;
+    }
+    else if (v.min > 0 && v.lvl < v.min)
+    {
+	return v.min;
+    }
+    else {
+	return v.lvl;
+    }
+}
+
+/*
  *  Get volume level.
  *  Returns char: Current volume level.
  *
@@ -164,6 +185,19 @@ define_function char volGetLevelAsByte(volume v)
 {
     integer x;
     x = volGetLevel(v);
+    return type_cast (x / 256);
+}
+
+/*
+ *  Get pre-mute volume level.
+ *  Returns char: Current volume level.
+ *
+ *  This function ignores mute status but respects min/max limits.
+ */
+define_function integer volGetLevelPreMuteAsByte(volume v)
+{
+    integer x;
+    x = volGetLevelPreMute(v);
     return type_cast (x / 256);
 }
 
