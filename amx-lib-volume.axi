@@ -139,17 +139,7 @@ define_function integer volGetLevel(volume v)
     }
     else
     {
-	if (v.max > 0 && v.lvl > v.max)
-	{
-	    return v.max;
-	}
-	else if (v.min > 0 && v.lvl < v.min)
-	{
-	    return v.min;
-	}
-	else {
-	    return v.lvl;
-	}
+	return volGetLevelPreMute(v);
     }
 }
 
@@ -229,6 +219,16 @@ define_function sinteger volSetLevel(volume v, integer value)
 }
 
 /*
+ *  Get the control's mute state.
+ *  Returns sinteger:
+ *  (VOL_MUTED | VOL_UNMUTED)
+ */
+define_function sinteger volGetMuteState(volume v)
+{
+    return v.mute;
+}
+
+/*
  *  Set volume level.
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
@@ -303,6 +303,23 @@ define_function sinteger volMute(volume v)
 define_function sinteger volUnmute(volume v)
 {
     v.mute = VOL_UNMUTED;
+    return VOL_SUCCESS;
+}
+
+/*
+ *  Toggle the channel's mute state.
+ */
+define_function sinteger volMuteToggle(volume v)
+{
+    if (v.mute == false)
+    {
+	v.mute = VOL_UNMUTED;
+    }
+    else
+    {
+	v.mute = VOL_MUTED;
+    }
+    
     return VOL_SUCCESS;
 }
 
