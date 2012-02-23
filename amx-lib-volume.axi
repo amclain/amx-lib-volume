@@ -313,11 +313,11 @@ define_function sinteger volMuteToggle(volume v)
 {
     if (v.mute == false)
     {
-	v.mute = VOL_UNMUTED;
+	v.mute = VOL_MUTED;
     }
     else
     {
-	v.mute = VOL_MUTED;
+	v.mute = VOL_UNMUTED;
     }
     
     return VOL_SUCCESS;
