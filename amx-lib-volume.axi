@@ -1,6 +1,6 @@
 (***********************************************************
     AMX VOLUME CONTROL LIBRARY
-    v0.1.1
+    v0.1.2
 
     Website: https://sourceforge.net/projects/amx-lib-volume/
     
@@ -44,12 +44,12 @@ PROGRAM_NAME='amx-lib-volume'
     History: See changelog.txt or version control repository.
 *)
 (***********************************************************)
-(*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
+(*           DEVICE NUMBER DEFINITIONS GO BELOW            *)
 (***********************************************************)
 DEFINE_DEVICE
 
 (***********************************************************)
-(*               CONSTANT DEFINITIONS GO BELOW             *)
+(*              CONSTANT DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_CONSTANT
 
@@ -80,22 +80,22 @@ struct volume
 }
 
 (***********************************************************)
-(*               VARIABLE DEFINITIONS GO BELOW             *)
+(*              VARIABLE DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_VARIABLE
 
 (***********************************************************)
-(*               LATCHING DEFINITIONS GO BELOW             *)
+(*              LATCHING DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_LATCHING
 
 (***********************************************************)
-(*       MUTUALLY EXCLUSIVE DEFINITIONS GO BELOW           *)
+(*         MUTUALLY EXCLUSIVE DEFINITIONS GO BELOW         *)
 (***********************************************************)
 DEFINE_MUTUALLY_EXCLUSIVE
 
 (***********************************************************)
-(*        SUBROUTINE/FUNCTION DEFINITIONS GO BELOW         *)
+(*         SUBROUTINE/FUNCTION DEFINITIONS GO BELOW        *)
 (***********************************************************)
 (* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
 (* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
@@ -139,17 +139,28 @@ define_function integer volGetLevel(volume v)
     }
     else
     {
-	if (v.max > 0 && v.lvl > v.max)
-	{
-	    return v.max;
-	}
-	else if (v.min > 0 && v.lvl < v.min)
-	{
-	    return v.min;
-	}
-	else {
-	    return v.lvl;
-	}
+	return volGetLevelPreMute(v);
+    }
+}
+
+/*
+ *  Get pre-mute volume level.
+ *  Returns integer: Current volume level.
+ *
+ *  This function ignores mute status but respects min/max limits.
+ */
+define_function integer volGetLevelPreMute(volume v)
+{
+    if (v.max > 0 && v.lvl > v.max)
+    {
+	return v.max;
+    }
+    else if (v.min > 0 && v.lvl < v.min)
+    {
+	return v.min;
+    }
+    else {
+	return v.lvl;
     }
 }
 
@@ -164,6 +175,19 @@ define_function char volGetLevelAsByte(volume v)
 {
     integer x;
     x = volGetLevel(v);
+    return type_cast (x / 256);
+}
+
+/*
+ *  Get pre-mute volume level.
+ *  Returns char: Current volume level.
+ *
+ *  This function ignores mute status but respects min/max limits.
+ */
+define_function integer volGetLevelPreMuteAsByte(volume v)
+{
+    integer x;
+    x = volGetLevelPreMute(v);
     return type_cast (x / 256);
 }
 
@@ -192,6 +216,16 @@ define_function sinteger volSetLevel(volume v, integer value)
 	v.lvl = value;
 	return VOL_SUCCESS;
     }
+}
+
+/*
+ *  Get the control's mute state.
+ *  Returns sinteger:
+ *  (VOL_MUTED | VOL_UNMUTED)
+ */
+define_function sinteger volGetMuteState(volume v)
+{
+    return v.mute;
 }
 
 /*
@@ -273,6 +307,23 @@ define_function sinteger volUnmute(volume v)
 }
 
 /*
+ *  Toggle the channel's mute state.
+ */
+define_function sinteger volMuteToggle(volume v)
+{
+    if (v.mute == false)
+    {
+	v.mute = VOL_MUTED;
+    }
+    else
+    {
+	v.mute = VOL_UNMUTED;
+    }
+    
+    return VOL_SUCCESS;
+}
+
+/*
  *  Set the amount that the level increaes/decreses when incremented.
  */
 define_function sinteger volSetStep(volume v, integer value)
@@ -309,6 +360,7 @@ define_function sinteger volSetNumSteps(volume v, integer steps)
 
 /*
  *  Increase the volume by incrementing the level by one step.
+ *  Is not affected by mute state.
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
  */
@@ -318,16 +370,17 @@ define_function sinteger volIncrement(volume v)
     
     if (v.step <= 0) return VOL_PARAM_NOT_SET;
     
-    l = volGetLevel(v) + v.step;
+    l = v.lvl + v.step;
     
     // Compensate for integer boundry wrap.
-    if (l < volGetLevel(v)) l = $FFFF;
+    if (l < v.lvl) l = $FFFF;
     
     return volSetLevel(v, l);
 }
 
 /*
  *  Decrease the volume by decrementing the level by one step.
+ *  Is not affected by mute state.
  *  Returns sinteger: Status message.
  *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
  */
@@ -337,10 +390,10 @@ define_function sinteger volDecrement(volume v)
     
     if (v.step <= 0) return VOL_PARAM_NOT_SET;
     
-    l = volGetLevel(v) - v.step;
+    l = v.lvl - v.step;
     
     // Compensate for integer boundry wrap.
-    if (l > volGetLevel(v)) l = $0000;
+    if (l > v.lvl) l = $0000;
     
     return volSetLevel(v, l);
 }
@@ -603,22 +656,21 @@ define_function sinteger volDecrementArray(volume v[])
 }
 
 (***********************************************************)
-(*                STARTUP CODE GOES BELOW                  *)
+(*                 STARTUP CODE GOES BELOW                 *)
 (***********************************************************)
 DEFINE_START
 
 (***********************************************************)
-(*                THE EVENTS GO BELOW                      *)
+(*                   THE EVENTS GO BELOW                   *)
 (***********************************************************)
 DEFINE_EVENT
 
 (***********************************************************)
-(*            THE ACTUAL PROGRAM GOES BELOW                *)
+(*                 THE MAINLINE GOES BELOW                 *)
 (***********************************************************)
 DEFINE_PROGRAM
 
 (***********************************************************)
 (*                     END OF PROGRAM                      *)
-(*        DO NOT PUT ANY CODE BELOW THIS COMMENT           *)
+(*          DO NOT PUT ANY CODE BELOW THIS COMMENT         *)
 (***********************************************************)
-

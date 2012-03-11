@@ -1,3 +1,8 @@
+Release 0.1.2
+-------------
+* Added volGetLevelPreMute(), volMuteToggle(), and volGetMuteState() functions.
+* Fixed bug with volIncrement() and volDecrement() not working when muted.
+
 Release 0.1.1
 -------------
 * Fixed bug which caused volInit() to skip reinitializing the step on an already initialized control.
