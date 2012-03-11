@@ -1,6 +1,6 @@
 (***********************************************************
     AMX VOLUME CONTROL LIBRARY
-    v0.1.1
+    v0.1.2
 
     Website: https://sourceforge.net/projects/amx-lib-volume/
     
