@@ -34,6 +34,8 @@
 ************************************************************)
 
 PROGRAM_NAME='amx-lib-volume'
+#if_not_defined AMX_LIB_VOLUME
+#define AMX_LIB_VOLUME 1
 (***********************************************************)
 (***********************************************************)
 (* System Type : NetLinx                                   *)
@@ -674,3 +676,4 @@ DEFINE_PROGRAM
 (*                     END OF PROGRAM                      *)
 (*          DO NOT PUT ANY CODE BELOW THIS COMMENT         *)
 (***********************************************************)
+#end_if
