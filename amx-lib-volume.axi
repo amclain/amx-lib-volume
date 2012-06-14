@@ -109,8 +109,18 @@ define_function sinteger volInit(volume v, integer lvl, char muteState, integer 
 {
     v.lvl = 0;
     v.mute = muteState;
-    v.min = min;
+    
+    // Max limit takes priority.
     v.max = max;
+    
+    if (min <= v.max)
+    {
+	v.min = min;
+    }
+    else
+    {
+	v.min = v.max;
+    }
     
     if (numSteps > 0) {
 	volSetNumSteps(v, numSteps);
@@ -217,6 +227,8 @@ define_function sinteger volSetLevelAsByte(volume v, char value)
 define_function sinteger volSetMax(volume v, integer value)
 {
     v.max = value;
+    if (v.min > v.max) v.min = v.max;
+    volSetLevel(v, v.lvl); // Set volume level to itself to check min/max boundries.
     return VOL_SUCCESS;
 }
 
@@ -239,6 +251,8 @@ define_function sinteger volSetMaxAsByte(volume v, char value)
 define_function sinteger volSetMin(volume v, integer value)
 {
     v.min = value;
+    if (v.max < v.min) v.max = v.min;
+    volSetLevel(v, v.lvl); // Set volume level to itself to check min/max boundries.
     return VOL_SUCCESS;
 }
 
