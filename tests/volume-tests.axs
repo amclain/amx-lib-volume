@@ -91,6 +91,13 @@ define_function testVolInit()
     assert(v.lvl == 45000, 'Init level, no min/max.');
     assert(v.max == 0, 'Zero max initialization.');
     assert(v.min == 0, 'Zero min initialization.');
+    
+    // Min exceeds max.
+    volInit(v, 30000, VOL_UNMUTED, 20000, 15000, 0);
+    
+    assert(v.min = 15000, 'Min exceeds max initialization: Min limit.');
+    assert(v.max = 15000, 'Min exceeds max initialization: Max limit.');
+    assert(v.lvl = 15000, 'Min exceeds max initialization: Level clamped.');
 }
 
 // Test volume return level.
@@ -212,6 +219,26 @@ define_function testVolSetMinMax()
     
     volSetMinAsByte(v, 40);
     assert(v.min == (40 * 256), 'Set min limit as byte.');
+    
+    // Test min set above max.
+    v.lvl = 0;
+    v.min = 0;
+    v.max = 30000;
+    
+    volSetMin(v, 35000);
+    assert(v.min = 35000, 'Set min limit above max: Min value.');
+    assert(v.max = 35000, 'Set min limit above max: Max value.');
+    assert(v.lvl = 35000, 'Set min limit above max: Level value.');
+    
+    // Test max set below min.
+    v.lvl = 0;
+    v.min = 30000;
+    v.max = $FFFF;
+    
+    volSetMax(v, 25000);
+    assert(v.min = 25000, 'Set max limit below min: Min value.');
+    assert(v.max = 25000, 'Set max limit below min: Max value.');
+    assert(v.lvl = 25000, 'Set max limit below min: Level value.');
 }
 
 // Test volume mute.
