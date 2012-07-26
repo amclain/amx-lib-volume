@@ -1,3 +1,6 @@
-\.src
-\.tkn
-\.tko
+~$
+\.swp$
+\.orig$
+\.src$
+\.tkn$
+\.tko$
