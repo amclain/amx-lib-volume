@@ -42,6 +42,7 @@ define_function testSuiteRun()
     testVolMute();
     testVolStep();
     testVolIncDec();
+    testVolDim();
     
     // Array tests.
     testVolInitArray();
@@ -51,6 +52,7 @@ define_function testSuiteRun()
     testVolArrayStep();
     testVolArrayMute();
     testVolArrayIncDec();
+    testVolArrayDim();
 }
 
 // Test volume control initialization.
@@ -376,6 +378,21 @@ define_function testVolIncDec()
     assert(v.lvl == 4000, 'Volume not adjusted.');
 }
 
+// Test level dimming.
+define_function testVolDim()
+{
+    volume v;
+    volInit(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    volSetDimAmount(v, 2000);
+    assert(v.dimAmount == 2000, 'Set dim amount.');
+    
+    volDimOn(v);
+    assert(volGetLevelPreMute(v) == 13000, 'Get dim level.');
+    
+    // Get dim level below min.
+}
+
 (***********************************************************)
 (*                 TEST ARRAY FUNCTIONS                    *)
 (***********************************************************)
@@ -517,6 +534,12 @@ define_function testVolArrayIncDec()
     
     volDecrementArray(v);
     assert(v[4].lvl == 10000, 'Decrement array hits min limit.');
+}
+
+// Test array dimming.
+define_function testVolArrayDim()
+{
+    
 }
 
 (***********************************************************)

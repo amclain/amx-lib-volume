@@ -59,6 +59,10 @@ DEFINE_CONSTANT
 VOL_UNMUTED	= 0;
 VOL_MUTED	= 1;
 
+// Volume dim states.
+VOL_DIM_OFF	= 0;
+VOL_DIM_ON	= 1;
+
 // Function return messages.
 VOL_SUCCESS		=  0;	// Operation succeded.
 VOL_FAILED		= -1;	// Generic operation failure.
@@ -79,6 +83,8 @@ struct volume
     integer max;	// Max volume level limit.  Assumed full-on ($FFFF) if not set.
     integer min;	// Min volume level limit.  Assumed full-off ($0000) if not set.
     integer step;	// Amount to raise/lower the volume level when incremented or decremented.
+    char dim;		// Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
+    integer dimAmount;	// Amount to reduce the level when dim is on.
 }
 
 (***********************************************************)
@@ -111,6 +117,8 @@ define_function sinteger volInit(volume v, integer lvl, char muteState, integer 
 {
     v.lvl = 0;
     v.mute = muteState;
+    v.dim = VOL_DIM_OFF;
+    v.dimAmount = 0;
     
     // Max limit takes priority.
     v.max = max;
@@ -412,6 +420,68 @@ define_function sinteger volDecrement(volume v)
     if (l > v.lvl) l = $0000;
     
     return volSetLevel(v, l);
+}
+
+/*
+ *  Dim the volume level.
+ */
+define_function volDimOn(volume v)
+{
+    v.dim = VOL_DIM_ON;
+}
+
+/*
+ *  Undim the volume level, returning it to its "normal" level.
+ */
+define_function volDimOff(volume v)
+{
+    v.dim = VOL_DIM_OFF;
+}
+
+/*
+ *  Get volume dim state.
+ *  Returns char: status.
+ *  (VOL_DIM_ON | VOL_DIM_OFF)
+ */
+define_function char volGetDimState(volume v)
+{
+    return v.dim;
+}
+
+/*
+ *  Get the amount that the level is dimmed when dim is on.
+ */
+define_function integer volGetDimAmount(volume v)
+{
+    return v.dimAmount;
+}
+
+/*
+ *  Get the amount that the level is dimmed when dim is on.
+ *
+ *  Returns a byte scaled from an integer.
+ */
+define_function char volGetDimAmountAsByte(volume v)
+{
+    return type_cast(v.dimAmount / 256);
+}
+
+/*
+ *  Set the amout that the level dims.
+ */
+define_function volSetDimAmount(volume v, integer amount)
+{
+    v.dimAmount = amount;
+}
+
+/*
+ *  Set the amount that the level dims.
+ *
+ *  Input is scaled from a byte to an integer.
+ */
+define_function volSetDimAmountAsByte(volume v, char amount)
+{
+    v.dimAmount = amount * 256;
 }
 
 (***********************************************************)
