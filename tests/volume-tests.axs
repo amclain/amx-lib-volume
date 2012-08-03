@@ -391,6 +391,16 @@ define_function testVolDim()
     assert(volGetLevelPreMute(v) == 13000, 'Get dim level.');
     
     // Get dim level below min.
+    // Dim should be processed post min limit.
+    volSetLevel(v, 9000);
+    assert(volGetLevelPreMute(v) == 8000, 'Get dim level, processed after min limit.');
+    
+    // Test for dim integer rollover below zero.
+    volSetDimAmount(v, 15000);
+    assert(volGetLevelPreMute(v) == 0, 'Get dim level, test integer rollover.');
+    
+    volDimOff(v);
+    assert(volGetLevelPreMute(v) == 10000, 'Turn level dim off.');
 }
 
 (***********************************************************)
@@ -539,7 +549,7 @@ define_function testVolArrayIncDec()
 // Test array dimming.
 define_function testVolArrayDim()
 {
-    
+    assert(false, 'Implement dim array functions.');
 }
 
 (***********************************************************)

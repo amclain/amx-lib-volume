@@ -171,17 +171,39 @@ define_function integer volGetLevel(volume v)
  */
 define_function integer volGetLevelPreMute(volume v)
 {
+    integer lvl;
+    integer lvlDim;
+    
+    // Do min/max adjustments.
     if (v.max > 0 && v.lvl > v.max)
     {
-	return v.max;
+	lvl = v.max;
     }
     else if (v.min > 0 && v.lvl < v.min)
     {
-	return v.min;
+	lvl = v.min;
     }
     else {
-	return v.lvl;
+	lvl = v.lvl;
     }
+    
+    // Do dim adjustments.
+    if (v.dim == VOL_DIM_ON)
+    {
+	lvlDim = lvl - v.dimAmount;
+	
+	// Check for integer rollover.
+	if (lvlDim > lvl)
+	{
+	    lvl = 0;
+	}
+	else
+	{
+	    lvl = lvlDim;
+	}
+    }
+    
+    return lvl;
 }
 
 /*
