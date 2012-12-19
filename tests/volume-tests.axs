@@ -577,11 +577,11 @@ define_function testVolArrayDim()
     
     // Dim the array.
     volArrayDimOn(v);
-    assert(volGetLevelPreMute(v[7]) == 16900, 'Array dimmed.');
+    assert(volGetLevelPreMute(v[7]) == 16900, 'Array dim on.');
     
-    // Undim the array.
+    // Turn array dim off.
     volArrayDimOff(v);
-    assert(volGetLevelPreMute(v[7]) == 17000, 'Array dimmed.');
+    assert(volGetLevelPreMute(v[7]) == 17000, 'Array dim off.');
 }
 
 (***********************************************************)
