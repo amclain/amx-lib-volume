@@ -551,7 +551,37 @@ define_function testVolArrayIncDec()
 // Test array dimming.
 define_function testVolArrayDim()
 {
-    assert(false, 'Implement dim array functions.');
+    volume v[8];
+    
+    volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    
+    v[1].lvl = 11000;
+    v[2].lvl = 12000;
+    v[3].lvl = 13000;
+    v[4].lvl = 14000;
+    v[5].lvl = 15000;
+    v[6].lvl = 16000;
+    v[7].lvl = 17000;
+    v[8].lvl = 18000;
+    
+    assert(volGetDimAmount(v[3]) == 0, 'Array dim amount is initialized to zero.');
+    assert(volGetDimState(v[4]) == VOL_DIM_OFF, 'Array dim state is initialized to off.');
+    
+    // Set dim amount as byte.
+    volSetArrayDimAmountAsByte(v, 50);
+    assert(volGetDimAmountAsByte(v[2]) == 50, 'Array dim amount set to 50 as byte.');
+    
+    // Set dim amount.
+    volSetArrayDimAmount(v, 100);
+    assert(volGetDimAmount(v[6]) == 100, 'Array dim amount set to 100.');
+    
+    // Dim the array.
+    volArrayDimOn(v);
+    assert(volGetLevelPreMute(v[7]) == 16900, 'Array dimmed.');
+    
+    // Undim the array.
+    volArrayDimOff(v);
+    assert(volGetLevelPreMute(v[7]) == 17000, 'Array dimmed.');
 }
 
 (***********************************************************)
