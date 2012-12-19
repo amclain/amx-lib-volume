@@ -389,6 +389,7 @@ define_function testVolDim()
     
     volDimOn(v);
     assert(volGetLevelPreMute(v) == 13000, 'Get dim level.');
+    assert(volGetDimState(v) == VOL_DIM_ON, 'Dim state on.');
     
     // Get dim level below min.
     // Dim should be processed post min limit.
@@ -401,6 +402,7 @@ define_function testVolDim()
     
     volDimOff(v);
     assert(volGetLevelPreMute(v) == 10000, 'Turn level dim off.');
+    assert(volGetDimState(v) == VOL_DIM_OFF, 'Dim state off.');
 }
 
 (***********************************************************)
