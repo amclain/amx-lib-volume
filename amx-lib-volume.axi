@@ -13,6 +13,20 @@
     volume controls from within an AMX Netlinx project by
     including this file.  Source code and documentation can
     be obtained from the website listed above.
+    
+    CONVENTIONS
+    
+    "VOL_" prefixes all library constants, and "vol" prefixes all
+    library functions (without quotes).
+    
+    Constants are snake case (underscores separate words) with all
+    uppercase letters.
+    
+    Function names are camel case with the first letter being lowercase.
+    
+    Volume levels have a native resolution of 16 bits (integer).
+    The "...AsByte" functions can be applied to convert these levels
+    to 8 bit values.
 *************************************************************
     Copyright 2011 Alex McLain
     
