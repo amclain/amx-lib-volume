@@ -13,10 +13,6 @@
     volume controls from within an AMX Netlinx project by
     including this file.  Source code and documentation can
     be obtained from the website listed above.
-    
-    NOTE: For the sake of consistency, "calls" are not used.
-    Instead, functions that would normally have no return
-    value return VOL_SUCCESS.
 *************************************************************
     Copyright 2011 Alex McLain
     
@@ -105,15 +101,13 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (***********************************************************)
 (*         SUBROUTINE/FUNCTION DEFINITIONS GO BELOW        *)
 (***********************************************************)
-(* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
-(* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
 
 /*
  *  Initialize volume control.
  *
  *  Parameters min, max, and numSteps can be set to 0 if not needed.
  */
-define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer numSteps)
+define_function volInit(volume v, integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
     v.lvl = 0;
     v.mute = muteState;
@@ -141,8 +135,6 @@ define_function sinteger volInit(volume v, integer lvl, char muteState, integer 
     }
     
     volSetLevel(v, lvl); // Will limit the volume to min/max range.
-    
-    return VOL_SUCCESS;
 }
 
 /*
@@ -337,25 +329,23 @@ define_function sinteger volSetMinAsByte(volume v, char value)
 /*
  *  Mute the channel.
  */
-define_function sinteger volMute(volume v)
+define_function volMute(volume v)
 {
     v.mute = VOL_MUTED;
-    return VOL_SUCCESS;
 }
 
 /*
  *  Unmute the channel.
  */
-define_function sinteger volUnmute(volume v)
+define_function volUnmute(volume v)
 {
     v.mute = VOL_UNMUTED;
-    return VOL_SUCCESS;
 }
 
 /*
  *  Toggle the channel's mute state.
  */
-define_function sinteger volMuteToggle(volume v)
+define_function volMuteToggle(volume v)
 {
     if (v.mute == false)
     {
@@ -365,17 +355,14 @@ define_function sinteger volMuteToggle(volume v)
     {
 	v.mute = VOL_UNMUTED;
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
  *  Set the amount that the level increaes/decreses when incremented.
  */
-define_function sinteger volSetStep(volume v, integer value)
+define_function volSetStep(volume v, integer value)
 {
     v.step = value;
-    return VOL_SUCCESS;
 }
 
 /*
@@ -383,12 +370,11 @@ define_function sinteger volSetStep(volume v, integer value)
  *
  *  Input value is scaled from a byte to an integer.
  */
-define_function sinteger volSetStepAsByte(volume v, char value)
+define_function volSetStepAsByte(volume v, char value)
 {
     integer x;
     x = type_cast (value * 256);
     v.step = x;
-    return VOL_SUCCESS;
 }
 
 /*
@@ -515,7 +501,7 @@ define_function volSetDimAmountAsByte(volume v, char amount)
  *  
  *  Parameters min, max, and numSteps can be set to 0 if not needed.
  */
-define_function sinteger volInitArray(volume v[], integer lvl, char muteState, integer min, integer max, integer numSteps)
+define_function volInitArray(volume v[], integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
     integer i;
     
@@ -523,8 +509,6 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
     {
 	volInit(v[i], lvl, muteState, min, max, numSteps);
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
@@ -653,7 +637,7 @@ define_function sinteger volSetArrayMinAsByte(volume v[], char value)
 /*
  *  Set the volume step amount for all controls in an array.
  */
-define_function sinteger volSetArrayStep(volume v[], integer value)
+define_function volSetArrayStep(volume v[], integer value)
 {
     integer i;
     
@@ -661,15 +645,12 @@ define_function sinteger volSetArrayStep(volume v[], integer value)
     {
 	volSetStep(v[i], value);
     }
-    
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
 }
 
 /*
  *  Set the volume step amount for all controls in an array.
  */
-define_function sinteger volSetArrayStepAsByte(volume v[], char value)
+define_function volSetArrayStepAsByte(volume v[], char value)
 {
     integer i;
     
@@ -677,9 +658,6 @@ define_function sinteger volSetArrayStepAsByte(volume v[], char value)
     {
 	volSetStepAsByte(v[i], value);
     }
-    
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
 }
 
 /*
@@ -702,7 +680,7 @@ define_function sinteger volSetArrayNumSteps(volume v[], integer steps)
 /*
  *  Mute all of the controls in the array.
  */
-define_function sinteger volMuteArray(volume v[])
+define_function volMuteArray(volume v[])
 {
     integer i;
     
@@ -710,14 +688,12 @@ define_function sinteger volMuteArray(volume v[])
     {
 	volMute(v[i]);
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
  *  Unmute all of the controls in the array.
  */
-define_function sinteger volUnmuteArray(volume v[])
+define_function volUnmuteArray(volume v[])
 {
     integer i;
     
@@ -725,8 +701,6 @@ define_function sinteger volUnmuteArray(volume v[])
     {
 	volUnmute(v[i]);
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
