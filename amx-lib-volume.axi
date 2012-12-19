@@ -489,7 +489,7 @@ define_function char volGetDimAmountAsByte(volume v)
 }
 
 /*
- *  Set the amout that the level dims.
+ *  Set the amount that the level dims.
  */
 define_function volSetDimAmount(volume v, integer amount)
 {
@@ -761,6 +761,61 @@ define_function sinteger volDecrementArray(volume v[])
     
     // TODO: Handle return value.
     return VOL_SUCCESS;
+}
+
+/*
+ *  Dim the volume level of all controls in the array.
+ */
+define_function volArrayDimOn(volume v[])
+{
+    integer i;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volDimOn(v[i]);
+    }
+}
+
+/*
+ *  Undim the volume level of all controls in the array,
+ *  returning them to their "normal" level.
+ */
+define_function volArrayDimOff(volume v[])
+{
+    integer i;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volDimOff(v[i]);
+    }
+}
+
+/*
+ *  Set the amount that the level dims for an array.
+ */
+define_function volSetArrayDimAmount(volume v[], integer amount)
+{
+    integer i;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volSetDimAmount(v[i], amount);
+    }
+}
+
+/*
+ *  Set the amount that the level dims for an array.
+ *
+ *  Input is scaled from a byte to an integer.
+ */
+define_function volSetArrayDimAmountAsByte(volume v[], char amount)
+{
+    integer i;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volSetDimAmountAsByte(v[i], amount);
+    }
 }
 
 (***********************************************************)
