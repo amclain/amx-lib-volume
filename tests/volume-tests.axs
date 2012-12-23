@@ -454,15 +454,18 @@ define_function testVolArrayGetLevel()
 // Test array set levels.
 define_function testVolArraySetLevel()
 {
+    integer result;
     volume v[8];
     
     volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
     
-    volSetArrayLevel(v, 16000);
+    result = volSetArrayLevel(v, 16000);
     assert(v[6].lvl == 16000, 'Set array levels.');
+    assert(result == VOL_SUCCESS, 'Set array levels result: Success.');
     
-    volSetArrayLevelAsByte(v, 70);
+    result = volSetArrayLevelAsByte(v, 70);
     assert(v[3].lvl == (70 * 256), 'Set array levels as byte.');
+    assert(result == VOL_SUCCESS, 'Set array levels as byte result: Success.');
 }
 
 // Test array set min/max limits.
@@ -502,11 +505,22 @@ define_function testVolArrayMinMax()
     result = volSetArrayMin(v, 45000);
     assert(v[6].min == 45000, 'Set array min limit above max limit.');
     assert(result == VOL_LIMITED, 'Set array min limit above max limit result: Limited.');
+    
+    // Set array level, limited.
+    result = volSetArrayLevel(v, 50000);
+    assert(v[5].lvl == 45000, 'Set array volume hits max limit.');
+    assert(result == VOL_LIMITED, 'Set array volume hits max limit result: Limited.');
+    
+    // Set array level as byte, limited.
+    result = volSetArrayLevelAsByte(v, 5);
+    assert(v[5].lvl == 45000, 'Set array volume as byte hits min limit.');
+    assert(result == VOL_LIMITED, 'Set array volume as byte hits min limit result: Limited.');
 }
 
 // Test array set step.
 define_function testVolArrayStep()
 {
+    integer result;
     volume v[8];
     
     volInitArray(v, 0, VOL_UNMUTED, 10000, 20000, 0);
@@ -514,14 +528,22 @@ define_function testVolArrayStep()
     // Set step.
     volSetArrayStep(v, 100);
     assert(v[7].step == 100, 'Set array step.');
+    assert(result == VOL_SUCCESS, 'Set array step result: Success.');
     
     // Set step as byte.
     volSetArrayStepAsByte(v, 2);
     assert(v[3].step == (2 * 256), 'Set array step as byte.');
+    assert(result == VOL_SUCCESS, 'Set array step as byte result: Success.');
     
     // Set number of steps.
-    volSetArrayNumSteps(v, 5);
+    result = volSetArrayNumSteps(v, 5);
     assert(v[5].step == 2000, 'Set array number of steps.');
+    assert(result == VOL_SUCCESS, 'Set array number of steps result: Success.');
+    
+    // Try to set number of steps to 0 (fail).
+    result = volSetArrayNumSteps(v, 0);
+    assert(v[1].step == 2000, 'Set array number of steps to 0 (failure).');
+    assert(result == VOL_FAILED, 'Set array number of steps to 0 result: VOL_FAILED.');
 }
 
 // Test array mute.
@@ -543,31 +565,36 @@ define_function testVolArrayMute()
 // Test array increment/decrement.
 define_function testVolArrayIncDec()
 {
+    integer result;
     volume v[8];
     
     volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
     
     // Increment.
-    volIncrementArray(v);
+    result = volIncrementArray(v);
     assert(v[8].lvl == 16000, 'Increment array.');
+    assert(result == VOL_SUCCESS, 'Increment array result: Success.');
     
     // Decrement.
     volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
     
-    volDecrementArray(v);
+    result = volDecrementArray(v);
     assert(v[1].lvl == 12000, 'Decrement array.');
+    assert(result == VOL_SUCCESS, 'Decrement array result: Success.');
     
     // Increment hits max limit.
     volInitArray(v, 19000, VOL_UNMUTED, 10000, 20000, 5);
     
-    volIncrementArray(v);
+    result = volIncrementArray(v);
     assert(v[5].lvl == 20000, 'Increment array hits max limit.');
+    assert(result == VOL_LIMITED, 'Increment array hits max limit result: Limited.');
     
     // Decrement hits min limit.
     volInitArray(v, 11000, VOL_UNMUTED, 10000, 20000, 5);
     
-    volDecrementArray(v);
+    result = volDecrementArray(v);
     assert(v[4].lvl == 10000, 'Decrement array hits min limit.');
+    assert(result == VOL_LIMITED, 'Decrement array hits min limit result: Limited.');
 }
 
 // Test array dimming.

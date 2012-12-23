@@ -580,14 +580,18 @@ define_function char volGetIndexLevelAsByte(volume v[], integer index)
 define_function integer volSetArrayLevel(volume v[], integer value)
 {
     integer i;
+    integer result;
+    integer instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetLevel(v[i], value);
+	instanceResult = volSetLevel(v[i], value);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return instanceResult;
 }
 
 /*
@@ -596,14 +600,18 @@ define_function integer volSetArrayLevel(volume v[], integer value)
 define_function integer volSetArrayLevelAsByte(volume v[], char value)
 {
     integer i;
+    integer result;
+    integer instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetLevelAsByte(v[i], value);
+	instanceResult = volSetLevelAsByte(v[i], value);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
@@ -731,14 +739,18 @@ define_function volSetArrayStepAsByte(volume v[], char value)
 define_function integer volSetArrayNumSteps(volume v[], integer steps)
 {
     integer i;
+    integer result;
+    integer instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetNumSteps(v[i], steps);
+	instanceResult = volSetNumSteps(v[i], steps);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
@@ -774,14 +786,18 @@ define_function volUnmuteArray(volume v[])
 define_function integer volIncrementArray(volume v[])
 {
     integer i;
+    integer result;
+    integer instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volIncrement(v[i]);
+	instanceResult = volIncrement(v[i]);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
@@ -791,14 +807,18 @@ define_function integer volIncrementArray(volume v[])
 define_function integer volDecrementArray(volume v[])
 {
     integer i;
+    integer result;
+    integer instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volDecrement(v[i]);
+	instanceResult = volDecrement(v[i]);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
