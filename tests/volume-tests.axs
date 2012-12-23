@@ -139,7 +139,7 @@ define_function testVolGetLevel()
 // Test setting volume level.
 define_function testVolSetLevel()
 {
-    sinteger result; // Function return value.
+    integer result; // Function return value.
     volume v;
     v.lvl = 0;
     v.min = 0;
@@ -174,14 +174,14 @@ define_function testVolSetLevel()
     
     result = volSetLevel(v, 10000);
     assert(v.lvl == 5000, 'Set level hits max limit.');
-    assert(result == VOL_LEVEL_LIMITED, 'Set level returns level limited.');
+    assert(result == VOL_LIMITED, 'Set level returns level limited.');
     
     v.max = 1000;
     result = $1000;
     
     result = volSetLevelAsByte(v, 200);
     assert(v.lvl == 1000, 'Set level as byte hits max limit.');
-    assert(result == VOL_LEVEL_LIMITED, 'Set level returns level limited.');
+    assert(result == VOL_LIMITED, 'Set level returns level limited.');
     
     v.max = 0;
     
@@ -191,56 +191,63 @@ define_function testVolSetLevel()
     
     result = volSetLevel(v, 10000);
     assert(v.lvl == 20000, 'Set level hits min limit.');
-    assert(result == VOL_LEVEL_LIMITED, 'Set level returns level limited.');
+    assert(result == VOL_LIMITED, 'Set level returns level limited.');
     
     v.min = 40000;
     result = $1000;
     
     result = volSetLevelAsByte(v, 10);
     assert(v.lvl == 40000, 'Set level as byte hits min limit.');
-    assert(result == VOL_LEVEL_LIMITED, 'Set level returns level limited.');
+    assert(result == VOL_LIMITED, 'Set level returns level limited.');
 }
 
 // Test setting min/max limits.
 define_function testVolSetMinMax()
 {
+    integer result;
     volume v;
     v.min = 0;
     v.max = 0;
     
     // Test max limit.
-    volSetMax(v, 10000);
+    result = volSetMax(v, 10000);
     assert(v.max == 10000, 'Set max limit.');
+    assert(result == VOL_SUCCESS, 'Set max limit result: Success.');
     
-    volSetMaxAsByte(v, 128);
+    result = volSetMaxAsByte(v, 128);
     assert(v.max == (128 * 256), 'Set max limit as byte.');
+    assert(result == VOL_SUCCESS, 'Set max limit as byte result: Success.');
     
     // Test min limit.
-    volSetMin(v, 40000);
-    assert(v.min == 40000, 'Set min limit.');
+    result = volSetMin(v, 30000);
+    assert(v.min == 30000, 'Set min limit.');
+    assert(result == VOL_SUCCESS, 'Set min limit result: Success.');
     
-    volSetMinAsByte(v, 40);
+    result = volSetMinAsByte(v, 40);
     assert(v.min == (40 * 256), 'Set min limit as byte.');
+    assert(result == VOL_SUCCESS, 'Set min limit as byte result: Success.');
     
     // Test min set above max.
     v.lvl = 0;
     v.min = 0;
     v.max = 30000;
     
-    volSetMin(v, 35000);
+    result = volSetMin(v, 35000);
     assert(v.min = 35000, 'Set min limit above max: Min value.');
     assert(v.max = 35000, 'Set min limit above max: Max value.');
     assert(v.lvl = 35000, 'Set min limit above max: Level value.');
+    assert(result == VOL_LIMITED, 'Set min limit above max result: Limited.');
     
     // Test max set below min.
     v.lvl = 0;
     v.min = 30000;
     v.max = $FFFF;
     
-    volSetMax(v, 25000);
+    result = volSetMax(v, 25000);
     assert(v.min = 25000, 'Set max limit below min: Min value.');
     assert(v.max = 25000, 'Set max limit below min: Max value.');
     assert(v.lvl = 25000, 'Set max limit below min: Level value.');
+    assert(result == VOL_LIMITED, 'Set max limit below min result: Limited.');
 }
 
 // Test volume mute.
@@ -282,7 +289,7 @@ define_function testVolStep()
 // Test incrementing/decrementing volume level.
 define_function testVolIncDec()
 {
-    sinteger result; // Function return value.
+    integer result; // Function return value.
     volume v;
     v.lvl = 14000;
     v.min = 10000;
@@ -309,7 +316,7 @@ define_function testVolIncDec()
     
     result = volIncrement(v);
     assert(v.lvl == 20000, 'Increment hits max limit.');
-    assert(result == VOL_LEVEL_LIMITED, 'Increment returns level limited.');
+    assert(result == VOL_LIMITED, 'Increment returns level limited.');
     
     // Decrement hits min limit.
     v.lvl = 11000;
@@ -317,7 +324,7 @@ define_function testVolIncDec()
     
     result = volDecrement(v);
     assert(v.lvl == 10000, 'Decrement hits min limit.');
-    assert(result == VOL_LEVEL_LIMITED, 'Decrement returns level limited.');
+    assert(result == VOL_LIMITED, 'Decrement returns level limited.');
     
     // Increment does not roll over integer.
     v.min = 0;
@@ -461,25 +468,40 @@ define_function testVolArraySetLevel()
 // Test array set min/max limits.
 define_function testVolArrayMinMax()
 {
+    integer result;
     volume v[8];
     
     volInitArray(v, 0, VOL_UNMUTED, 0, 0, 0);
     
     // Set max.
-    volSetArrayMax(v, 40000);
+    result = volSetArrayMax(v, 40000);
     assert(v[5].max == 40000, 'Set array max limit.');
+    assert(result == VOL_SUCCESS, 'Set array max limit result: Success.');
     
     // Set max as byte.
-    volSetArrayMaxAsByte(v, 195);
+    result = volSetArrayMaxAsByte(v, 195);
     assert(v[8].max == (195 * 256), 'Set array max limit as byte.');
+    assert(result == VOL_SUCCESS, 'Set array max limit as byte result: Success.');
     
     // Set min.
-    volSetArrayMin(v, 5000);
+    result = volSetArrayMin(v, 5000);
     assert(v[2].min == 5000, 'Set array min limit.');
+    assert(result == VOL_SUCCESS, 'Set array min limit result: Success.');
     
     // Set min as byte.
-    volSetArrayMinAsByte(v, 10);
+    result = volSetArrayMinAsByte(v, 10);
     assert(v[1].min == (10 * 256), 'Set array min limit as byte.');
+    assert(result == VOL_SUCCESS, 'Set array min limit as byte result: Success.');
+    
+    // Set max, limited.
+    result = volSetArrayMax(v, 1000);
+    assert(v[7].max == 1000, 'Set array max limit below min limit.');
+    assert(result == VOL_LIMITED, 'Set array max limit below min limit result: Limited.');
+    
+    // Set min, limited.
+    result = volSetArrayMin(v, 45000);
+    assert(v[6].min == 45000, 'Set array min limit above max limit.');
+    assert(result == VOL_LIMITED, 'Set array min limit above max limit result: Limited.');
 }
 
 // Test array set step.
