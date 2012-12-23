@@ -139,7 +139,7 @@ define_function testVolGetLevel()
 // Test setting volume level.
 define_function testVolSetLevel()
 {
-    integer result; // Function return value.
+    sinteger result; // Function return value.
     volume v;
     v.lvl = 0;
     v.min = 0;
@@ -204,7 +204,7 @@ define_function testVolSetLevel()
 // Test setting min/max limits.
 define_function testVolSetMinMax()
 {
-    integer result;
+    sinteger result;
     volume v;
     v.min = 0;
     v.max = 0;
@@ -289,7 +289,7 @@ define_function testVolStep()
 // Test incrementing/decrementing volume level.
 define_function testVolIncDec()
 {
-    integer result; // Function return value.
+    sinteger result; // Function return value.
     volume v;
     v.lvl = 14000;
     v.min = 10000;
@@ -454,7 +454,7 @@ define_function testVolArrayGetLevel()
 // Test array set levels.
 define_function testVolArraySetLevel()
 {
-    integer result;
+    sinteger result;
     volume v[8];
     
     volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
@@ -471,7 +471,7 @@ define_function testVolArraySetLevel()
 // Test array set min/max limits.
 define_function testVolArrayMinMax()
 {
-    integer result;
+    sinteger result;
     volume v[8];
     
     volInitArray(v, 0, VOL_UNMUTED, 0, 0, 0);
@@ -520,7 +520,7 @@ define_function testVolArrayMinMax()
 // Test array set step.
 define_function testVolArrayStep()
 {
-    integer result;
+    sinteger result;
     volume v[8];
     
     volInitArray(v, 0, VOL_UNMUTED, 10000, 20000, 0);
@@ -565,7 +565,7 @@ define_function testVolArrayMute()
 // Test array increment/decrement.
 define_function testVolArrayIncDec()
 {
-    integer result;
+    sinteger result;
     volume v[8];
     
     volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
