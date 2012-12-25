@@ -1,6 +1,6 @@
 (***********************************************************
     AMX VOLUME CONTROL LIBRARY
-    v0.1.2
+    v0.2.0 RC1
 
     Website: https://sourceforge.net/projects/amx-lib-volume/
     
@@ -29,7 +29,7 @@
     The "...AsByte" functions can be applied to convert these levels
     to 8 bit (char) values.
 *************************************************************
-    Copyright 2011 Alex McLain
+    Copyright 2011, 2012 Alex McLain
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
