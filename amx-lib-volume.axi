@@ -70,7 +70,7 @@ DEFINE_CONSTANT
 VOL_UNMUTED	= 0;
 VOL_MUTED	= 1;
 
-// Volume dim states.
+// Volume control dim states.
 VOL_DIM_OFF	= 0;
 VOL_DIM_ON	= 1;
 
