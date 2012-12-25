@@ -36,7 +36,7 @@ define_function testSuiteRun()
 {
     // Single control tests.
     testVolInit();
-    testVolGetLevel();
+    testvolGetLevelPostMute();
     testVolSetLevel();
     testVolSetMinMax();
     testVolMute();
@@ -45,7 +45,7 @@ define_function testSuiteRun()
     testVolDim();
     
     // Array tests.
-    testVolInitArray();
+    testvolArrayInit();
     testVolArrayGetLevel();
     testVolArraySetLevel();
     testVolArrayMinMax();
@@ -103,7 +103,7 @@ define_function testVolInit()
 }
 
 // Test volume return level.
-define_function testVolGetLevel()
+define_function testvolGetLevelPostMute()
 {
     volume v;
     v.lvl = 15000;
@@ -112,28 +112,28 @@ define_function testVolGetLevel()
     v.max = 20000;
     
     // Normal level.
-    assert(volGetLevel(v) == 15000, 'Get volume level.');
-    assert(volGetLevelAsByte(v) == (15000 / 256), 'Get volume level as byte.');
+    assert(volGetLevelPostMute(v) == 15000, 'Get volume level.');
+    assert(volGetLevelPostMuteAsByte(v) == (15000 / 256), 'Get volume level as byte.');
     
     // Muted level.
     v.mute = VOL_MUTED;
     
-    assert(volGetLevel(v) == 0, 'Get volume level muted.');
-    assert(volGetLevelAsByte(v) == 0, 'Get volume level muted as byte.');
+    assert(volGetLevelPostMute(v) == 0, 'Get volume level muted.');
+    assert(volGetLevelPostMuteAsByte(v) == 0, 'Get volume level muted as byte.');
     
     v.mute = VOL_UNMUTED;
     
     // Exceed max level.
     v.lvl = 40000;
     
-    assert(volGetLevel(v) == 20000, 'Get volume, max limit hit.');
-    assert(volGetLevelAsByte(v) == (20000 / 256), 'Get volume as byte, max limit hit.');
+    assert(volGetLevelPostMute(v) == 20000, 'Get volume, max limit hit.');
+    assert(volGetLevelPostMuteAsByte(v) == (20000 / 256), 'Get volume as byte, max limit hit.');
     
     // Exceed min level.
     v.lvl = 1000;
     
-    assert(volGetLevel(v) == 10000, 'Get volume, min limit hit.');
-    assert(volGetLevelAsByte(v) == (10000 / 256), 'Get volume as byte, min limit hit.');
+    assert(volGetLevelPostMute(v) == 10000, 'Get volume, min limit hit.');
+    assert(volGetLevelPostMuteAsByte(v) == (10000 / 256), 'Get volume as byte, min limit hit.');
 }
 
 // Test setting volume level.
@@ -282,7 +282,7 @@ define_function testVolStep()
     v.min = 10000;
     v.max = 20000;
     
-    volSetNumSteps(v, 5);
+    volSetNumberOfSteps(v, 5);
     assert(v.step = ((v.max - v.min) / 5), 'Set number of steps.');
 }
 
@@ -395,20 +395,20 @@ define_function testVolDim()
     assert(v.dimAmount == 2000, 'Set dim amount.');
     
     volDimOn(v);
-    assert(volGetLevelPreMute(v) == 13000, 'Get dim level.');
+    assert(volGetLevel(v) == 13000, 'Get dim level.');
     assert(volGetDimState(v) == VOL_DIM_ON, 'Dim state on.');
     
     // Get dim level below min.
     // Dim should be processed post min limit.
     volSetLevel(v, 9000);
-    assert(volGetLevelPreMute(v) == 8000, 'Get dim level, processed after min limit.');
+    assert(volGetLevel(v) == 8000, 'Get dim level, processed after min limit.');
     
     // Test for dim integer rollover below zero.
     volSetDimAmount(v, 15000);
-    assert(volGetLevelPreMute(v) == 0, 'Get dim level, test integer rollover.');
+    assert(volGetLevel(v) == 0, 'Get dim level, test integer rollover.');
     
     volDimOff(v);
-    assert(volGetLevelPreMute(v) == 10000, 'Turn level dim off.');
+    assert(volGetLevel(v) == 10000, 'Turn level dim off.');
     assert(volGetDimState(v) == VOL_DIM_OFF, 'Dim state off.');
 }
 
@@ -417,12 +417,12 @@ define_function testVolDim()
 (***********************************************************)
 
 // Test array initialization.
-define_function testVolInitArray()
+define_function testvolArrayInit()
 {
     volume v[8];
     
     // Initialize array and assert random indexes.
-    volInitArray(v, 15000, VOL_MUTED, 10000, 20000, 5);
+    volArrayInit(v, 15000, VOL_MUTED, 10000, 20000, 5);
     
     assert(v[6].lvl == 15000, 'Init array level.');
     assert(v[5].mute == VOL_MUTED, 'Init array mute state.');
@@ -436,7 +436,7 @@ define_function testVolArrayGetLevel()
 {
     volume v[8];
     
-    volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
     
     v[1].lvl = 11000;
     v[2].lvl = 12000;
@@ -447,8 +447,8 @@ define_function testVolArrayGetLevel()
     v[7].lvl = 17000;
     v[8].lvl = 18000;
     
-    assert(volGetIndexLevel(v, 7) == 17000, 'Get index volume.');
-    assert(volGetIndexLevelAsByte(v, 3) == (13000 / 256), 'Get index volume as byte.');
+    assert(volArrayGetLevel(v, 7) == 17000, 'Get index volume.');
+    assert(volArrayGetLevelAsByte(v, 3) == (13000 / 256), 'Get index volume as byte.');
 }
 
 // Test array set levels.
@@ -457,13 +457,13 @@ define_function testVolArraySetLevel()
     sinteger result;
     volume v[8];
     
-    volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
     
-    result = volSetArrayLevel(v, 16000);
+    result = volArraySetLevel(v, 16000);
     assert(v[6].lvl == 16000, 'Set array levels.');
     assert(result == VOL_SUCCESS, 'Set array levels result: Success.');
     
-    result = volSetArrayLevelAsByte(v, 70);
+    result = volArraySetLevelAsByte(v, 70);
     assert(v[3].lvl == (70 * 256), 'Set array levels as byte.');
     assert(result == VOL_SUCCESS, 'Set array levels as byte result: Success.');
 }
@@ -474,45 +474,45 @@ define_function testVolArrayMinMax()
     sinteger result;
     volume v[8];
     
-    volInitArray(v, 0, VOL_UNMUTED, 0, 0, 0);
+    volArrayInit(v, 0, VOL_UNMUTED, 0, 0, 0);
     
     // Set max.
-    result = volSetArrayMax(v, 40000);
+    result = volArraySetMax(v, 40000);
     assert(v[5].max == 40000, 'Set array max limit.');
     assert(result == VOL_SUCCESS, 'Set array max limit result: Success.');
     
     // Set max as byte.
-    result = volSetArrayMaxAsByte(v, 195);
+    result = volArraySetMaxAsByte(v, 195);
     assert(v[8].max == (195 * 256), 'Set array max limit as byte.');
     assert(result == VOL_SUCCESS, 'Set array max limit as byte result: Success.');
     
     // Set min.
-    result = volSetArrayMin(v, 5000);
+    result = volArraySetMin(v, 5000);
     assert(v[2].min == 5000, 'Set array min limit.');
     assert(result == VOL_SUCCESS, 'Set array min limit result: Success.');
     
     // Set min as byte.
-    result = volSetArrayMinAsByte(v, 10);
+    result = volArraySetMinAsByte(v, 10);
     assert(v[1].min == (10 * 256), 'Set array min limit as byte.');
     assert(result == VOL_SUCCESS, 'Set array min limit as byte result: Success.');
     
     // Set max, limited.
-    result = volSetArrayMax(v, 1000);
+    result = volArraySetMax(v, 1000);
     assert(v[7].max == 1000, 'Set array max limit below min limit.');
     assert(result == VOL_LIMITED, 'Set array max limit below min limit result: Limited.');
     
     // Set min, limited.
-    result = volSetArrayMin(v, 45000);
+    result = volArraySetMin(v, 45000);
     assert(v[6].min == 45000, 'Set array min limit above max limit.');
     assert(result == VOL_LIMITED, 'Set array min limit above max limit result: Limited.');
     
     // Set array level, limited.
-    result = volSetArrayLevel(v, 50000);
+    result = volArraySetLevel(v, 50000);
     assert(v[5].lvl == 45000, 'Set array volume hits max limit.');
     assert(result == VOL_LIMITED, 'Set array volume hits max limit result: Limited.');
     
     // Set array level as byte, limited.
-    result = volSetArrayLevelAsByte(v, 5);
+    result = volArraySetLevelAsByte(v, 5);
     assert(v[5].lvl == 45000, 'Set array volume as byte hits min limit.');
     assert(result == VOL_LIMITED, 'Set array volume as byte hits min limit result: Limited.');
 }
@@ -523,25 +523,25 @@ define_function testVolArrayStep()
     sinteger result;
     volume v[8];
     
-    volInitArray(v, 0, VOL_UNMUTED, 10000, 20000, 0);
+    volArrayInit(v, 0, VOL_UNMUTED, 10000, 20000, 0);
     
     // Set step.
-    volSetArrayStep(v, 100);
+    volArraySetStep(v, 100);
     assert(v[7].step == 100, 'Set array step.');
     assert(result == VOL_SUCCESS, 'Set array step result: Success.');
     
     // Set step as byte.
-    volSetArrayStepAsByte(v, 2);
+    volArraySetStepAsByte(v, 2);
     assert(v[3].step == (2 * 256), 'Set array step as byte.');
     assert(result == VOL_SUCCESS, 'Set array step as byte result: Success.');
     
     // Set number of steps.
-    result = volSetArrayNumSteps(v, 5);
+    result = volArraySetNumberOfSteps(v, 5);
     assert(v[5].step == 2000, 'Set array number of steps.');
     assert(result == VOL_SUCCESS, 'Set array number of steps result: Success.');
     
     // Try to set number of steps to 0 (fail).
-    result = volSetArrayNumSteps(v, 0);
+    result = volArraySetNumberOfSteps(v, 0);
     assert(v[1].step == 2000, 'Set array number of steps to 0 (failure).');
     assert(result == VOL_FAILED, 'Set array number of steps to 0 result: VOL_FAILED.');
 }
@@ -551,14 +551,14 @@ define_function testVolArrayMute()
 {
     volume v[8];
     
-    volInitArray(v, 0, VOL_UNMUTED, 0, 0, 0);
+    volArrayInit(v, 0, VOL_UNMUTED, 0, 0, 0);
     
     // Mute array.
-    volMuteArray(v);
+    volArrayMute(v);
     assert(v[6].mute == VOL_MUTED, 'Mute array.');
     
     // Unmute array.
-    volUnmuteArray(v);
+    volArrayUnmute(v);
     assert(v[4].mute == VOL_UNMUTED, 'Unmute array.');
 }
 
@@ -568,31 +568,31 @@ define_function testVolArrayIncDec()
     sinteger result;
     volume v[8];
     
-    volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
     
     // Increment.
-    result = volIncrementArray(v);
+    result = volArrayIncrement(v);
     assert(v[8].lvl == 16000, 'Increment array.');
     assert(result == VOL_SUCCESS, 'Increment array result: Success.');
     
     // Decrement.
-    volInitArray(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 14000, VOL_UNMUTED, 10000, 20000, 5);
     
-    result = volDecrementArray(v);
+    result = volArrayDecrement(v);
     assert(v[1].lvl == 12000, 'Decrement array.');
     assert(result == VOL_SUCCESS, 'Decrement array result: Success.');
     
     // Increment hits max limit.
-    volInitArray(v, 19000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 19000, VOL_UNMUTED, 10000, 20000, 5);
     
-    result = volIncrementArray(v);
+    result = volArrayIncrement(v);
     assert(v[5].lvl == 20000, 'Increment array hits max limit.');
     assert(result == VOL_LIMITED, 'Increment array hits max limit result: Limited.');
     
     // Decrement hits min limit.
-    volInitArray(v, 11000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 11000, VOL_UNMUTED, 10000, 20000, 5);
     
-    result = volDecrementArray(v);
+    result = volArrayDecrement(v);
     assert(v[4].lvl == 10000, 'Decrement array hits min limit.');
     assert(result == VOL_LIMITED, 'Decrement array hits min limit result: Limited.');
 }
@@ -602,7 +602,7 @@ define_function testVolArrayDim()
 {
     volume v[8];
     
-    volInitArray(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
+    volArrayInit(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
     
     v[1].lvl = 11000;
     v[2].lvl = 12000;
@@ -617,20 +617,20 @@ define_function testVolArrayDim()
     assert(volGetDimState(v[4]) == VOL_DIM_OFF, 'Array dim state is initialized to off.');
     
     // Set dim amount as byte.
-    volSetArrayDimAmountAsByte(v, 50);
+    volArraySetDimAmountAsByte(v, 50);
     assert(volGetDimAmountAsByte(v[2]) == 50, 'Array dim amount set to 50 as byte.');
     
     // Set dim amount.
-    volSetArrayDimAmount(v, 100);
+    volArraySetDimAmount(v, 100);
     assert(volGetDimAmount(v[6]) == 100, 'Array dim amount set to 100.');
     
     // Dim the array.
     volArrayDimOn(v);
-    assert(volGetLevelPreMute(v[7]) == 16900, 'Array dim on.');
+    assert(volGetLevel(v[7]) == 16900, 'Array dim on.');
     
     // Turn array dim off.
     volArrayDimOff(v);
-    assert(volGetLevelPreMute(v[7]) == 17000, 'Array dim off.');
+    assert(volGetLevel(v[7]) == 17000, 'Array dim off.');
 }
 
 (***********************************************************)
