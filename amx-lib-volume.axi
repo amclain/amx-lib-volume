@@ -491,7 +491,7 @@ define_function volDimOff(volume v)
  *  Returns char: status.
  *  (VOL_DIM_ON | VOL_DIM_OFF)
  */
-define_function char volGetDimState(volume v)
+define_function sinteger volGetDimState(volume v)
 {
     return v.dim;
 }
