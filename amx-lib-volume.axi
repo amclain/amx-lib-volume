@@ -244,16 +244,6 @@ define_function sinteger volGetLevelPostMuteAsByte(volume v)
 }
 
 /*
- *  Get the control's mute state.
- *  Returns integer:
- *  (VOL_MUTED | VOL_UNMUTED)
- */
-define_function sinteger volGetMuteState(volume v)
-{
-    return v.mute;
-}
-
-/*
  *  Set volume level.
  *  Returns integer: Status message.
  *  (VOL_SUCCESS | VOL_LIMITED)
@@ -384,8 +374,11 @@ define_function volUnmute(volume v)
 
 /*
  *  Toggle the channel's mute state.
+ *
+ *  Returns the resulting mute state after toggle:
+ *  (VOL_MUTED | VOL_UNMUTED)
  */
-define_function volToggleMute(volume v)
+define_function sinteger volToggleMute(volume v)
 {
     if (v.mute == false)
     {
@@ -395,6 +388,18 @@ define_function volToggleMute(volume v)
     {
 	v.mute = VOL_UNMUTED;
     }
+    
+    return volGetMuteState(v);
+}
+
+/*
+ *  Get the control's mute state.
+ *  Returns sinteger:
+ *  (VOL_MUTED | VOL_UNMUTED)
+ */
+define_function sinteger volGetMuteState(volume v)
+{
+    return v.mute;
 }
 
 /*
