@@ -1,6 +1,6 @@
 (***********************************************************
     AMX VOLUME CONTROL LIBRARY
-    v0.1.2
+    v0.2.0 RC1
 
     Website: https://sourceforge.net/projects/amx-lib-volume/
     
@@ -14,11 +14,22 @@
     including this file.  Source code and documentation can
     be obtained from the website listed above.
     
-    NOTE: For the sake of consistency, "calls" are not used.
-    Instead, functions that would normally have no return
-    value return VOL_SUCCESS.
+    CONVENTIONS
+    
+    "VOL_" prefixes all library constants, and "vol" prefixes all
+    library functions (without quotes). "volArray" prefixes any
+    functions that operate on an array of structure "volume".
+    
+    Constants are snake case (underscores separate words) with all
+    uppercase letters.
+    
+    Function names are camel case with the first letter being lowercase.
+    
+    Volume levels have a native resolution of 16 bits (integer).
+    The "...AsByte" functions can be applied to convert these levels
+    to 8 bit (char) values.
 *************************************************************
-    Copyright 2011 Alex McLain
+    Copyright 2011, 2012 Alex McLain
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -34,6 +45,8 @@
 ************************************************************)
 
 PROGRAM_NAME='amx-lib-volume'
+#if_not_defined AMX_LIB_VOLUME
+#define AMX_LIB_VOLUME 1
 (***********************************************************)
 (***********************************************************)
 (* System Type : NetLinx                                   *)
@@ -57,10 +70,14 @@ DEFINE_CONSTANT
 VOL_UNMUTED	= 0;
 VOL_MUTED	= 1;
 
+// Volume dim states.
+VOL_DIM_OFF	= 0;
+VOL_DIM_ON	= 1;
+
 // Function return messages.
 VOL_SUCCESS		=  0;	// Operation succeded.
 VOL_FAILED		= -1;	// Generic operation failure.
-VOL_LEVEL_LIMITED	= -2;	// Input value was limited due to min/max limit.
+VOL_LIMITED		= -2;	// Input value was limited and may not have reached its specified value.
 VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
 VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.
 
@@ -77,6 +94,8 @@ struct volume
     integer max;	// Max volume level limit.  Assumed full-on ($FFFF) if not set.
     integer min;	// Min volume level limit.  Assumed full-off ($0000) if not set.
     integer step;	// Amount to raise/lower the volume level when incremented or decremented.
+    char dim;		// Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
+    integer dimAmount;	// Amount to reduce the level when dim is on.
 }
 
 (***********************************************************)
@@ -97,23 +116,33 @@ DEFINE_MUTUALLY_EXCLUSIVE
 (***********************************************************)
 (*         SUBROUTINE/FUNCTION DEFINITIONS GO BELOW        *)
 (***********************************************************)
-(* EXAMPLE: DEFINE_FUNCTION <RETURN_TYPE> <NAME> (<PARAMETERS>) *)
-(* EXAMPLE: DEFINE_CALL '<NAME>' (<PARAMETERS>) *)
 
 /*
  *  Initialize volume control.
  *
  *  Parameters min, max, and numSteps can be set to 0 if not needed.
  */
-define_function sinteger volInit(volume v, integer lvl, char muteState, integer min, integer max, integer numSteps)
+define_function volInit(volume v, integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
     v.lvl = 0;
     v.mute = muteState;
-    v.min = min;
+    v.dim = VOL_DIM_OFF;
+    v.dimAmount = 0;
+    
+    // Max limit takes priority.
     v.max = max;
     
+    if (min <= v.max)
+    {
+	v.min = min;
+    }
+    else
+    {
+	v.min = v.max;
+    }
+    
     if (numSteps > 0) {
-	volSetNumSteps(v, numSteps);
+	volSetNumberOfSteps(v, numSteps);
     }
     else
     {
@@ -121,17 +150,60 @@ define_function sinteger volInit(volume v, integer lvl, char muteState, integer 
     }
     
     volSetLevel(v, lvl); // Will limit the volume to min/max range.
-    
-    return VOL_SUCCESS;
 }
 
 /*
- *  Get volume level.
+ *  Get pre-mute volume level.
  *  Returns integer: Current volume level.
  *
- *  This function takes into account mute status and min/max limits.
+ *  This function ignores mute status but respects min/max limits
+ *  and dim state.
  */
 define_function integer volGetLevel(volume v)
+{
+    integer lvl;
+    integer lvlDim;
+    
+    // Do min/max adjustments.
+    if (v.max > 0 && v.lvl > v.max)
+    {
+	lvl = v.max;
+    }
+    else if (v.min > 0 && v.lvl < v.min)
+    {
+	lvl = v.min;
+    }
+    else {
+	lvl = v.lvl;
+    }
+    
+    // Do dim adjustments.
+    if (v.dim == VOL_DIM_ON)
+    {
+	lvlDim = lvl - v.dimAmount;
+	
+	// Check for integer rollover.
+	if (lvlDim > lvl)
+	{
+	    lvl = 0;
+	}
+	else
+	{
+	    lvl = lvlDim;
+	}
+    }
+    
+    return lvl;
+}
+
+/*
+ *  Get post-mute volume level.
+ *  Returns integer: Current volume level.
+ *
+ *  This function takes into account mute status, min/max limits,
+ *  and dim state.
+ */
+define_function integer volGetLevelPostMute(volume v)
 {
     if (v.mute == VOL_MUTED)
     {
@@ -139,36 +211,15 @@ define_function integer volGetLevel(volume v)
     }
     else
     {
-	return volGetLevelPreMute(v);
+	return volGetLevel(v);
     }
 }
 
 /*
  *  Get pre-mute volume level.
- *  Returns integer: Current volume level.
- *
- *  This function ignores mute status but respects min/max limits.
- */
-define_function integer volGetLevelPreMute(volume v)
-{
-    if (v.max > 0 && v.lvl > v.max)
-    {
-	return v.max;
-    }
-    else if (v.min > 0 && v.lvl < v.min)
-    {
-	return v.min;
-    }
-    else {
-	return v.lvl;
-    }
-}
-
-/*
- *  Get volume level.
  *  Returns char: Current volume level.
  *
- *  This function takes into account mute status and min/max limits.
+ *  This function ignores mute status but respects min/max limits.
  *  Return value is scaled from an integer to a byte.
  */
 define_function char volGetLevelAsByte(volume v)
@@ -179,48 +230,22 @@ define_function char volGetLevelAsByte(volume v)
 }
 
 /*
- *  Get pre-mute volume level.
+ *  Get post-mute volume level.
  *  Returns char: Current volume level.
  *
- *  This function ignores mute status but respects min/max limits.
+ *  This function takes into account mute status and min/max limits.
+ *  Return value is scaled from an integer to a byte.
  */
-define_function integer volGetLevelPreMuteAsByte(volume v)
+define_function sinteger volGetLevelPostMuteAsByte(volume v)
 {
     integer x;
-    x = volGetLevelPreMute(v);
+    x = volGetLevelPostMute(v);
     return type_cast (x / 256);
 }
 
 /*
- *  Set volume level.
- *  Returns sinteger: Status message.
- *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
- *
- *  This function takes into account min/max limits.
- *  This function does not affect mute status.
- */
-define_function sinteger volSetLevel(volume v, integer value)
-{
-    if (v.max > 0 && value > v.max)
-    {
-	v.lvl = v.max;
-	return VOL_LEVEL_LIMITED;
-    }
-    else if (v.min > 0 && value < v.min)
-    {
-	v.lvl = v.min;
-	return VOL_LEVEL_LIMITED;
-    }
-    else
-    {
-	v.lvl = value;
-	return VOL_SUCCESS;
-    }
-}
-
-/*
  *  Get the control's mute state.
- *  Returns sinteger:
+ *  Returns integer:
  *  (VOL_MUTED | VOL_UNMUTED)
  */
 define_function sinteger volGetMuteState(volume v)
@@ -230,8 +255,35 @@ define_function sinteger volGetMuteState(volume v)
 
 /*
  *  Set volume level.
- *  Returns sinteger: Status message.
- *  (VOL_SUCCESS | VOL_LEVEL_LIMITED)
+ *  Returns integer: Status message.
+ *  (VOL_SUCCESS | VOL_LIMITED)
+ *
+ *  This function takes into account min/max limits.
+ *  This function does not affect mute status.
+ */
+define_function sinteger volSetLevel(volume v, integer value)
+{
+    if (v.max > 0 && value > v.max)
+    {
+	v.lvl = v.max;
+	return VOL_LIMITED;
+    }
+    else if (v.min > 0 && value < v.min)
+    {
+	v.lvl = v.min;
+	return VOL_LIMITED;
+    }
+    else
+    {
+	v.lvl = value;
+	return VOL_SUCCESS;
+    }
+}
+
+/*
+ *  Set volume level.
+ *  Returns integer: Status message.
+ *  (VOL_SUCCESS | VOL_LIMITED)
  *
  *  This function takes into account min/max limits.
  *  This function does not affect mute status.
@@ -245,71 +297,95 @@ define_function sinteger volSetLevelAsByte(volume v, char value)
 }
 
 /*
- * Set max limit.
- * Input: value > 0 to enable, value = 0 to disable.
+ *  Set max limit.
+ *  Input: value > 0 to enable, value = 0 to disable.
+ *  Returns VOL_SUCCESS | VOL_LIMITED.
  */
 define_function sinteger volSetMax(volume v, integer value)
 {
+    sinteger result;
+    result = VOL_SUCCESS;
+    
     v.max = value;
-    return VOL_SUCCESS;
+    
+    if (v.min > v.max)
+    {
+	v.min = v.max;
+	result = VOL_LIMITED;
+    }
+    
+    volSetLevel(v, v.lvl); // Set volume level to itself to check min/max boundries.
+    
+    return result;
 }
 
 /*
  *  Set max limit.
  *  Input: value > 0 to enable, value = 0 to disable.
+ *  Returns VOL_SUCCESS | VOL_LIMITED.
  *  
  *  Input value is scaled from a byte to an integer.
  */
 define_function sinteger volSetMaxAsByte(volume v, char value)
 {
-    v.max = type_cast (value * 256);
-    return VOL_SUCCESS;
+    return volSetMax(v, type_cast(value * 256));
 }
 
 /*
  *  Set minimum limit.
  *  Input: value > 0 to enable, value = 0 to disable.
+ *  Returns VOL_SUCCESS | VOL_LIMITED.
  */
 define_function sinteger volSetMin(volume v, integer value)
 {
+    sinteger result;
+    result = VOL_SUCCESS;
+    
     v.min = value;
-    return VOL_SUCCESS;
+    
+    if (v.max < v.min)
+    {
+	v.max = v.min;
+	result = VOL_LIMITED;
+    }
+    
+    volSetLevel(v, v.lvl); // Set volume level to itself to check min/max boundries.
+    
+    return result;
 }
 
 /*
  *  Set minimum limit.
  *  Input: value > 0 to enable, value = 0 to disable.
+ *  Returns VOL_SUCCESS | VOL_LIMITED.
  *  
  *  Input value is scaled from a byte to an integer.
  */
 define_function sinteger volSetMinAsByte(volume v, char value)
 {
-    v.min = type_cast (value * 256);
-    return VOL_SUCCESS;
+    return volSetMin(v, type_cast(value * 256));
 }
 
 /*
  *  Mute the channel.
  */
-define_function sinteger volMute(volume v)
+define_function volMute(volume v)
 {
     v.mute = VOL_MUTED;
-    return VOL_SUCCESS;
 }
 
 /*
  *  Unmute the channel.
  */
-define_function sinteger volUnmute(volume v)
+define_function volUnmute(volume v)
 {
     v.mute = VOL_UNMUTED;
-    return VOL_SUCCESS;
 }
 
 /*
  *  Toggle the channel's mute state.
  */
-define_function sinteger volMuteToggle(volume v)
+define_function volToggleMute(volume v)
 {
     if (v.mute == false)
     {
@@ -319,17 +395,14 @@ define_function sinteger volMuteToggle(volume v)
     {
 	v.mute = VOL_UNMUTED;
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
  *  Set the amount that the level increaes/decreses when incremented.
  */
-define_function sinteger volSetStep(volume v, integer value)
+define_function volSetStep(volume v, integer value)
 {
     v.step = value;
-    return VOL_SUCCESS;
 }
 
 /*
@@ -337,12 +410,11 @@ define_function sinteger volSetStep(volume v, integer value)
  *
  *  Input value is scaled from a byte to an integer.
  */
-define_function sinteger volSetStepAsByte(volume v, char value)
+define_function volSetStepAsByte(volume v, char value)
 {
     integer x;
     x = type_cast (value * 256);
     v.step = x;
-    return VOL_SUCCESS;
 }
 
 /*
@@ -350,7 +422,7 @@ define_function sinteger volSetStepAsByte(volume v, char value)
  *
  *  This is an alternative to defining the value of the step.
  */
-define_function sinteger volSetNumSteps(volume v, integer steps)
+define_function sinteger volSetNumberOfSteps(volume v, integer steps)
 {
     if (steps == 0) return VOL_FAILED;
     
@@ -361,8 +433,8 @@ define_function sinteger volSetNumSteps(volume v, integer steps)
 /*
  *  Increase the volume by incrementing the level by one step.
  *  Is not affected by mute state.
- *  Returns sinteger: Status message.
- *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
+ *  Returns integer: Status message.
+ *  (VOL_SUCCESS | VOL_LIMITED | VOL_PARAM_NOT_SET)
  */
 define_function sinteger volIncrement(volume v)
 {
@@ -381,8 +453,8 @@ define_function sinteger volIncrement(volume v)
 /*
  *  Decrease the volume by decrementing the level by one step.
  *  Is not affected by mute state.
- *  Returns sinteger: Status message.
- *  (VOL_SUCCESS | VOL_LEVEL_LIMITED | VOL_PARAM_NOT_SET)
+ *  Returns integer: Status message.
+ *  (VOL_SUCCESS | VOL_LIMITED | VOL_PARAM_NOT_SET)
  */
 define_function sinteger volDecrement(volume v)
 {
@@ -398,6 +470,68 @@ define_function sinteger volDecrement(volume v)
     return volSetLevel(v, l);
 }
 
+/*
+ *  Dim the volume level.
+ */
+define_function volDimOn(volume v)
+{
+    v.dim = VOL_DIM_ON;
+}
+
+/*
+ *  Undim the volume level, returning it to its "normal" level.
+ */
+define_function volDimOff(volume v)
+{
+    v.dim = VOL_DIM_OFF;
+}
+
+/*
+ *  Get volume dim state.
+ *  Returns char: status.
+ *  (VOL_DIM_ON | VOL_DIM_OFF)
+ */
+define_function char volGetDimState(volume v)
+{
+    return v.dim;
+}
+
+/*
+ *  Get the amount that the level is dimmed when dim is on.
+ */
+define_function integer volGetDimAmount(volume v)
+{
+    return v.dimAmount;
+}
+
+/*
+ *  Get the amount that the level is dimmed when dim is on.
+ *
+ *  Returns a byte scaled from an integer.
+ */
+define_function char volGetDimAmountAsByte(volume v)
+{
+    return type_cast(v.dimAmount / 256);
+}
+
+/*
+ *  Set the amount that the level dims.
+ */
+define_function volSetDimAmount(volume v, integer amount)
+{
+    v.dimAmount = amount;
+}
+
+/*
+ *  Set the amount that the level dims.
+ *
+ *  Input is scaled from a byte to an integer.
+ */
+define_function volSetDimAmountAsByte(volume v, char amount)
+{
+    v.dimAmount = amount * 256;
+}
+
 (***********************************************************)
 (*                    ARRAY FUNCTIONS                      *)
 (***********************************************************)
@@ -407,7 +541,7 @@ define_function sinteger volDecrement(volume v)
  *  
  *  Parameters min, max, and numSteps can be set to 0 if not needed.
  */
-define_function sinteger volInitArray(volume v[], integer lvl, char muteState, integer min, integer max, integer numSteps)
+define_function volArrayInit(volume v[], integer lvl, char muteState, integer min, integer max, integer numSteps)
 {
     integer i;
     
@@ -415,8 +549,6 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
     {
 	volInit(v[i], lvl, muteState, min, max, numSteps);
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
@@ -425,7 +557,7 @@ define_function sinteger volInitArray(volume v[], integer lvl, char muteState, i
  *
  *  This function takes into account mute status and min/max limits.
  */
-define_function integer volGetIndexLevel(volume v[], integer index)
+define_function integer volArrayGetLevel(volume v[], integer index)
 {
     if (index > max_length_array(v)) return 0;
     
@@ -439,7 +571,7 @@ define_function integer volGetIndexLevel(volume v[], integer index)
  *  This function takes into account mute status and min/max limits.
  *  Return value is scaled from an integer to a byte.
  */
-define_function char volGetIndexLevelAsByte(volume v[], integer index)
+define_function char volArrayGetLevelAsByte(volume v[], integer index)
 {
     if (index > max_length_array(v)) return 0;
     
@@ -449,103 +581,139 @@ define_function char volGetIndexLevelAsByte(volume v[], integer index)
 /*
  *  Set the volume level for all controls in an array.
  */
-define_function sinteger volSetArrayLevel(volume v[], integer value)
+define_function sinteger volArraySetLevel(volume v[], integer value)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetLevel(v[i], value);
+	instanceResult = volSetLevel(v[i], value);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return instanceResult;
 }
 
 /*
  *  Set the volume level for all controls in an array.
  */
-define_function sinteger volSetArrayLevelAsByte(volume v[], char value)
+define_function sinteger volArraySetLevelAsByte(volume v[], char value)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetLevelAsByte(v[i], value);
+	instanceResult = volSetLevelAsByte(v[i], value);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Set the max volume limit for all controls in an array.
+ *
+ *  Returns VOL_LIMITED if any instance in the array is limited.
+ *  Otherwise returns VOL_SUCCESS.
  */
-define_function sinteger volSetArrayMax(volume v[], integer value)
+define_function sinteger volArraySetMax(volume v[], integer value)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetMax(v[i], value);
+	instanceResult = volSetMax(v[i], value);
+	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Set the max volume limit for all controls in an array.
+ *
+ *  Returns VOL_LIMITED if any instance in the array is limited.
+ *  Otherwise returns VOL_SUCCESS.
  */
-define_function sinteger volSetArrayMaxAsByte(volume v[], char value)
+define_function sinteger volArraySetMaxAsByte(volume v[], char value)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetMaxAsByte(v[i], value);
+	instanceResult = volSetMaxAsByte(v[i], value);
+	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Set the min volume limit for all controls in an array.
+ *
+ *  Returns VOL_LIMITED if any instance in the array is limited.
+ *  Otherwise returns VOL_SUCCESS.
  */
-define_function sinteger volSetArrayMin(volume v[], integer value)
+define_function sinteger volArraySetMin(volume v[], integer value)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetMin(v[i], value);
+	instanceResult = volSetMin(v[i], value);
+	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Set the min volume limit for all controls in an array.
+ *
+ *  Returns VOL_LIMITED if any instance in the array is limited.
+ *  Otherwise returns VOL_SUCCESS.
  */
-define_function sinteger volSetArrayMinAsByte(volume v[], char value)
+define_function sinteger volArraySetMinAsByte(volume v[], char value)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetMinAsByte(v[i], value);
+	instanceResult = volSetMinAsByte(v[i], value);
+	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Set the volume step amount for all controls in an array.
  */
-define_function sinteger volSetArrayStep(volume v[], integer value)
+define_function volArraySetStep(volume v[], integer value)
 {
     integer i;
     
@@ -553,15 +721,12 @@ define_function sinteger volSetArrayStep(volume v[], integer value)
     {
 	volSetStep(v[i], value);
     }
-    
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
 }
 
 /*
  *  Set the volume step amount for all controls in an array.
  */
-define_function sinteger volSetArrayStepAsByte(volume v[], char value)
+define_function volArraySetStepAsByte(volume v[], char value)
 {
     integer i;
     
@@ -569,32 +734,33 @@ define_function sinteger volSetArrayStepAsByte(volume v[], char value)
     {
 	volSetStepAsByte(v[i], value);
     }
-    
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
 }
 
 /*
  *  Set the number of steps all controls in the array can be
  *  incremented or decremented.
  */
-define_function sinteger volSetArrayNumSteps(volume v[], integer steps)
+define_function sinteger volArraySetNumberOfSteps(volume v[], integer steps)
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetNumSteps(v[i], steps);
+	instanceResult = volSetNumberOfSteps(v[i], steps);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Mute all of the controls in the array.
  */
-define_function sinteger volMuteArray(volume v[])
+define_function volArrayMute(volume v[])
 {
     integer i;
     
@@ -602,14 +768,12 @@ define_function sinteger volMuteArray(volume v[])
     {
 	volMute(v[i]);
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
  *  Unmute all of the controls in the array.
  */
-define_function sinteger volUnmuteArray(volume v[])
+define_function volArrayUnmute(volume v[])
 {
     integer i;
     
@@ -617,42 +781,103 @@ define_function sinteger volUnmuteArray(volume v[])
     {
 	volUnmute(v[i]);
     }
-    
-    return VOL_SUCCESS;
 }
 
 /*
  *  Increase the volume of all controls in the array
  *  by one step.
  */
-define_function sinteger volIncrementArray(volume v[])
+define_function sinteger volArrayIncrement(volume v[])
 {
     integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volIncrement(v[i]);
+	instanceResult = volIncrement(v[i]);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    return result;
 }
 
 /*
  *  Decrease the volume of all controls in the array
  *  by one step.
  */
-define_function sinteger volDecrementArray(volume v[])
+define_function sinteger volArrayDecrement(volume v[])
+{
+    integer i;
+    sinteger result;
+    sinteger instanceResult;
+    
+    result = VOL_SUCCESS;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	instanceResult = volDecrement(v[i]);
+	if (instanceResult != VOL_SUCCESS) result = instanceResult;
+    }
+    
+    return result;
+}
+
+/*
+ *  Dim the volume level of all controls in the array.
+ */
+define_function volArrayDimOn(volume v[])
 {
     integer i;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volDecrement(v[i]);
+	volDimOn(v[i]);
     }
+}
+
+/*
+ *  Undim the volume level of all controls in the array,
+ *  returning them to their "normal" level.
+ */
+define_function volArrayDimOff(volume v[])
+{
+    integer i;
     
-    // TODO: Handle return value.
-    return VOL_SUCCESS;
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volDimOff(v[i]);
+    }
+}
+
+/*
+ *  Set the amount that the level dims for an array.
+ */
+define_function volArraySetDimAmount(volume v[], integer amount)
+{
+    integer i;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volSetDimAmount(v[i], amount);
+    }
+}
+
+/*
+ *  Set the amount that the level dims for an array.
+ *
+ *  Input is scaled from a byte to an integer.
+ */
+define_function volArraySetDimAmountAsByte(volume v[], char amount)
+{
+    integer i;
+    
+    for(i = 1; i <= max_length_array(v); i++)
+    {
+	volSetDimAmountAsByte(v[i], amount);
+    }
 }
 
 (***********************************************************)
@@ -674,3 +899,4 @@ DEFINE_PROGRAM
 (*                     END OF PROGRAM                      *)
 (*          DO NOT PUT ANY CODE BELOW THIS COMMENT         *)
 (***********************************************************)
+#end_if

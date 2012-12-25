@@ -42,7 +42,7 @@ DEFINE_DEVICE
 
 dvDebug = 0:0:0;	// For debug output.
 
-dvIO 	= 5001:9:0;	// Volume up/down button connections.
+dvIO 	= 36000:1:0;	// Volume up/down button connections.
 
 (***********************************************************)
 (*               CONSTANT DEFINITIONS GO BELOW             *)

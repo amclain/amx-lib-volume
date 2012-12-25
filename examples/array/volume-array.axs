@@ -40,7 +40,7 @@ DEFINE_DEVICE
 
 dvDebug = 0:0:0;	// For debug output.
 
-dvIO 	= 5001:9:0;	// Volume up/down button connections.
+dvIO 	= 36000:1:0;	// Volume up/down button connections.
 
 (***********************************************************)
 (*               CONSTANT DEFINITIONS GO BELOW             *)
@@ -92,7 +92,7 @@ DEFINE_MUTUALLY_EXCLUSIVE
 DEFINE_START
 
 // Initialize the array of volume controls.
-volInitArray(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);
+volArrayInit(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);
 
 (***********************************************************)
 (*                THE EVENTS GO BELOW                      *)
@@ -104,7 +104,7 @@ button_event[dvIO, 1]
 {
     PUSH:
     {
-	volIncrementArray(inputs); // Increment the volume up a step.
+	volArrayIncrement(inputs); // Increment the volume up a step.
 	send_string dvDebug, "'Volume Up MIC1: ', itoa(volGetLevel(inputs[MIC1]))";
 	send_string dvDebug, "'Volume Up MIC2: ', itoa(volGetLevel(inputs[MIC2]))";
 	send_string dvDebug, "'Volume Up MIC3: ', itoa(volGetLevel(inputs[MIC3]))";
@@ -121,7 +121,7 @@ button_event[dvIO, 2]
 {
     PUSH:
     {
-	volDecrementArray(inputs); // Decrement the volume down a step.
+	volArrayDecrement(inputs); // Decrement the volume down a step.
 	send_string dvDebug, "'Volume Dn MIC1: ', itoa(volGetLevel(inputs[MIC1]))";
 	send_string dvDebug, "'Volume Dn MIC2: ', itoa(volGetLevel(inputs[MIC2]))";
 	send_string dvDebug, "'Volume Dn MIC3: ', itoa(volGetLevel(inputs[MIC3]))";
