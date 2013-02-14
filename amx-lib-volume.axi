@@ -146,7 +146,7 @@ define_function volInit(volume v, integer lvl, char muteState, integer min, inte
     }
     else
     {
-	v.step = 0;
+	v.step = 1;
     }
     
     volSetLevel(v, lvl); // Will limit the volume to min/max range.
@@ -241,6 +241,31 @@ define_function sinteger volGetLevelPostMuteAsByte(volume v)
     integer x;
     x = volGetLevelPostMute(v);
     return type_cast (x / 256);
+}
+
+/*
+ *  Get a volume level that fits on a touch panel's bargraph.
+ *  Returns char: Current volume level scaled to a range of 0-255
+ *                taking into account min/max.
+ */
+define_function char volGetTouchPanelLevel(volume v)
+{
+    long range
+    long scaled;
+    
+    // If the max limit is not set, it is not being used and max is all bits on.
+    if (v.max == 0)
+    {
+	range = $FFFF - v.min;
+    }
+    else
+    {
+	range = v.max - v.min;
+    }
+    
+    scaled = (v.lvl - v.min) * 255 / range;
+    
+    return type_cast(scaled);
 }
 
 /*
