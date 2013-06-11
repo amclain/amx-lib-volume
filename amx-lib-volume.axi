@@ -90,7 +90,7 @@ DEFINE_TYPE
 struct volume
 {
     integer lvl;	// Volume level.
-    char mute;		// Mute status (VOL_MUTED | VOL_UNMUTED).
+    integer mute;	// Mute status (VOL_MUTED | VOL_UNMUTED).
     integer max;	// Max volume level limit.  Assumed full-on ($FFFF) if not set.
     integer min;	// Min volume level limit.  Assumed full-off ($0000) if not set.
     integer step;	// Amount to raise/lower the volume level when incremented or decremented.
@@ -403,7 +403,7 @@ define_function volUnmute(volume v)
  *  Returns the resulting mute state after toggle:
  *  (VOL_MUTED | VOL_UNMUTED)
  */
-define_function sinteger volToggleMute(volume v)
+define_function integer volToggleMute(volume v)
 {
     if (v.mute == false)
     {
@@ -422,7 +422,7 @@ define_function sinteger volToggleMute(volume v)
  *  Returns sinteger:
  *  (VOL_MUTED | VOL_UNMUTED)
  */
-define_function sinteger volGetMuteState(volume v)
+define_function integer volGetMuteState(volume v)
 {
     return v.mute;
 }
