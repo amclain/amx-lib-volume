@@ -428,7 +428,7 @@ define_function integer volGetMuteState(volume v)
 }
 
 /*
- *  Set the amount that the level increaes/decreses when incremented.
+ *  Set the amount that the level increases/decreases when incremented.
  */
 define_function volSetStep(volume v, integer value)
 {
@@ -436,7 +436,7 @@ define_function volSetStep(volume v, integer value)
 }
 
 /*
- *  Set the amount that the level increaes/decreses when incremented.
+ *  Set the amount that the level increases/decreases when incremented.
  *
  *  Input value is scaled from a byte to an integer.
  */
