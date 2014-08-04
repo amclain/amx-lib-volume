@@ -5,8 +5,10 @@
     Website: https://sourceforge.net/projects/amx-lib-volume/
     
     This is a snake case wrapper for the volume control
-    library functions. For more information, see:
+    library functions. To use this file, make sure to include
+    amx-lib-volume.axi in the workspace.
     
+    For more information, see:
         amx-lib-volume.axi
     
 *************************************************************
@@ -43,7 +45,7 @@ define_function vol_init(volume v, integer lvl, char muteState, integer min, int
 
 /*
  *  Get pre-mute volume level.
- *  Returns integer: Current volume level.
+ *  Returns current volume level.
  *
  *  This function ignores mute status but respects min/max limits
  *  and dim state.
@@ -55,7 +57,7 @@ define_function integer vol_get_level(volume v)
 
 /*
  *  Get post-mute volume level.
- *  Returns integer: Current volume level.
+ *  Returns current volume level.
  *
  *  This function takes into account mute status, min/max limits,
  *  and dim state.
@@ -67,7 +69,7 @@ define_function integer vol_get_level_post_mute(volume v)
 
 /*
  *  Get pre-mute volume level.
- *  Returns char: Current volume level.
+ *  Returns current volume level.
  *
  *  This function ignores mute status but respects min/max limits.
  *  Return value is scaled from an integer to a byte.
@@ -79,7 +81,7 @@ define_function char vol_get_level_as_byte(volume v)
 
 /*
  *  Get post-mute volume level.
- *  Returns char: Current volume level.
+ *  Returns current volume level.
  *
  *  This function takes into account mute status and min/max limits.
  *  Return value is scaled from an integer to a byte.
@@ -91,8 +93,8 @@ define_function sinteger vol_get_level_post_mute_as_byte(volume v)
 
 /*
  *  Get a volume level that fits on a touch panel's bargraph.
- *  Returns char: Current volume level scaled to a range of 0-255
- *                taking into account min/max.
+ *  Returns current volume level scaled to a range of 0-255
+ *      taking into account min/max.
  */
 define_function char vol_get_touch_panel_level(volume v)
 {
@@ -101,7 +103,7 @@ define_function char vol_get_touch_panel_level(volume v)
 
 /*
  *  Set volume level.
- *  Returns integer: Status message.
+ *  Returns status:
  *  (VOL_SUCCESS | VOL_LIMITED)
  *
  *  This function takes into account min/max limits.
@@ -114,7 +116,7 @@ define_function sinteger vol_set_level(volume v, integer value)
 
 /*
  *  Set volume level.
- *  Returns integer: Status message.
+ *  Returns status:
  *  (VOL_SUCCESS | VOL_LIMITED)
  *
  *  This function takes into account min/max limits.
@@ -238,7 +240,7 @@ define_function sinteger vol_set_number_of_steps(volume v, integer steps)
 /*
  *  Increase the volume by incrementing the level by one step.
  *  Is not affected by mute state.
- *  Returns integer: Status message.
+ *  Returns status:
  *  (VOL_SUCCESS | VOL_LIMITED | VOL_PARAM_NOT_SET)
  */
 define_function sinteger vol_increment(volume v)
@@ -249,7 +251,7 @@ define_function sinteger vol_increment(volume v)
 /*
  *  Decrease the volume by decrementing the level by one step.
  *  Is not affected by mute state.
- *  Returns integer: Status message.
+ *  Returns status:
  *  (VOL_SUCCESS | VOL_LIMITED | VOL_PARAM_NOT_SET)
  */
 define_function sinteger vol_decrement(volume v)
@@ -275,7 +277,7 @@ define_function vol_dim_off(volume v)
 
 /*
  *  Get volume dim state.
- *  Returns char: status.
+ *  Returns status:
  *  (VOL_DIM_ON | VOL_DIM_OFF)
  */
 define_function sinteger vol_get_dim_state(volume v)
@@ -304,9 +306,9 @@ define_function char vol_get_dim_amount_as_byte(volume v)
 /*
  *  Set the amount that the level dims.
  */
-define_function vol_set_dim_amount(volume v, integer amount)
+define_function sinteger vol_set_dim_amount(volume v, integer amount)
 {
-    volSetDimAmount(v, amount);
+    return volSetDimAmount(v, amount);
 }
 
 /*
@@ -314,9 +316,9 @@ define_function vol_set_dim_amount(volume v, integer amount)
  *
  *  Input is scaled from a byte to an integer.
  */
-define_function vol_set_dim_amount_as_byte(volume v, char amount)
+define_function sinteger vol_set_dim_amount_as_byte(volume v, char amount)
 {
-    volSetDimAmountAsByte(v, amount);
+    return volSetDimAmountAsByte(v, amount);
 }
 
 /*
@@ -331,7 +333,7 @@ define_function vol_array_init(volume v[], integer lvl, char muteState, integer 
 
 /*
  *  Get the volume level for a control in an array at the given index.
- *  Returns integer: Current volume level.
+ *  Returns current volume level.
  *
  *  This function takes into account mute status and min/max limits.
  */
@@ -342,7 +344,7 @@ define_function integer vol_array_get_level(volume v[], integer index)
 
 /*
  *  Get the volume level for a control in an array at the given index.
- *  Returns char: Current volume level.
+ *  Returns current volume level.
  *
  *  This function takes into account mute status and min/max limits.
  *  Return value is scaled from an integer to a byte.

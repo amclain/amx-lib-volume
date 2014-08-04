@@ -389,11 +389,14 @@ define_function testVolIncDec()
 // Test level dimming.
 define_function testVolDim()
 {
+    sinteger result;
+    
     volume v;
     volInit(v, 15000, VOL_UNMUTED, 10000, 20000, 5);
     
-    volSetDimAmount(v, 2000);
+    result = volSetDimAmount(v, 2000);
     assert(v.dimAmount == 2000, 'Set dim amount.');
+    assertEqual(result, VOL_SUCCESS, 'Set dim amount returns success.');
     
     volDimOn(v);
     assert(volGetLevel(v) == 13000, 'Get dim level.');
@@ -405,8 +408,9 @@ define_function testVolDim()
     assert(volGetLevel(v) == 8000, 'Get dim level, processed after min limit.');
     
     // Test for dim integer rollover below zero.
-    volSetDimAmount(v, 15000);
+    result = volSetDimAmount(v, 15000);
     assert(volGetLevel(v) == 0, 'Get dim level, test integer rollover.');
+    assertEqual(result, VOL_SUCCESS, 'Set dim amount rollover returns success.');
     
     volDimOff(v);
     assert(volGetLevel(v) == 10000, 'Turn level dim off.');
