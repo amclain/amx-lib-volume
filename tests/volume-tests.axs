@@ -85,7 +85,8 @@ define_function testVolInit()
     // Zero step initialization.
     volInit(v, 15000, VOL_UNMUTED, 10000, 20000, 0);
     
-    assert(v.step == 0, 'Zero step initialization.');
+        // Needs to be > 0 to prevent divide by 0 errors.
+    assert(v.step > 0, 'Zero step initialization.');
     
     // No min/max initialization.
     volInit(v, 45000, VOL_UNMUTED, 0, 0, 0);

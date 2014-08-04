@@ -38,9 +38,9 @@ PROGRAM_NAME='volume array'
 (***********************************************************)
 DEFINE_DEVICE
 
-dvDebug = 0:0:0;	// For debug output.
+dvDebug = 0:0:0;        // For debug output.
 
-dvIO 	= 36000:1:0;	// Volume up/down button connections.
+dvIO    = 36000:1:0;    // Volume up/down button connections.
 
 (***********************************************************)
 (*               CONSTANT DEFINITIONS GO BELOW             *)
@@ -48,14 +48,14 @@ dvIO 	= 36000:1:0;	// Volume up/down button connections.
 DEFINE_CONSTANT
 
 // Volume control indexes.
-MIC1	= 1;	// Microphone 1.
-MIC2	= 2;	// Microphone 2.
-MIC3	= 3;	// Microphone 3.
-MIC4	= 4;	// Microphone 4.
-WLS1	= 5;	// Wireless mic 1.
-WLS2	= 6;	// Wireless mic 2.
-IPOD	= 7;	// iPod input.
-CD	= 8;	// CD player input.
+MIC1    = 1;    // Microphone 1.
+MIC2    = 2;    // Microphone 2.
+MIC3    = 3;    // Microphone 3.
+MIC4    = 4;    // Microphone 4.
+WLS1    = 5;    // Wireless mic 1.
+WLS2    = 6;    // Wireless mic 2.
+IPOD    = 7;    // iPod input.
+CD      = 8;    // CD player input.
 
 (***********************************************************)
 (*              DATA TYPE DEFINITIONS GO BELOW             *)
@@ -104,15 +104,15 @@ button_event[dvIO, 1]
 {
     PUSH:
     {
-	volArrayIncrement(inputs); // Increment the volume up a step.
-	send_string dvDebug, "'Volume Up MIC1: ', itoa(volGetLevel(inputs[MIC1]))";
-	send_string dvDebug, "'Volume Up MIC2: ', itoa(volGetLevel(inputs[MIC2]))";
-	send_string dvDebug, "'Volume Up MIC3: ', itoa(volGetLevel(inputs[MIC3]))";
-	send_string dvDebug, "'Volume Up MIC4: ', itoa(volGetLevel(inputs[MIC4]))";
-	send_string dvDebug, "'Volume Up WLS1: ', itoa(volGetLevel(inputs[WLS1]))";
-	send_string dvDebug, "'Volume Up WLS2: ', itoa(volGetLevel(inputs[WLS2]))";
-	send_string dvDebug, "'Volume Up IPOD: ', itoa(volGetLevel(inputs[IPOD]))";
-	send_string dvDebug, "'Volume Up   CD: ', itoa(volGetLevel(inputs[CD]))";
+        volArrayIncrement(inputs); // Increment the volume up a step.
+        send_string dvDebug, "'Volume Up MIC1: ', itoa(volGetLevel(inputs[MIC1]))";
+        send_string dvDebug, "'Volume Up MIC2: ', itoa(volGetLevel(inputs[MIC2]))";
+        send_string dvDebug, "'Volume Up MIC3: ', itoa(volGetLevel(inputs[MIC3]))";
+        send_string dvDebug, "'Volume Up MIC4: ', itoa(volGetLevel(inputs[MIC4]))";
+        send_string dvDebug, "'Volume Up WLS1: ', itoa(volGetLevel(inputs[WLS1]))";
+        send_string dvDebug, "'Volume Up WLS2: ', itoa(volGetLevel(inputs[WLS2]))";
+        send_string dvDebug, "'Volume Up IPOD: ', itoa(volGetLevel(inputs[IPOD]))";
+        send_string dvDebug, "'Volume Up   CD: ', itoa(volGetLevel(inputs[CD]))";
     }
 }
 
@@ -121,15 +121,15 @@ button_event[dvIO, 2]
 {
     PUSH:
     {
-	volArrayDecrement(inputs); // Decrement the volume down a step.
-	send_string dvDebug, "'Volume Dn MIC1: ', itoa(volGetLevel(inputs[MIC1]))";
-	send_string dvDebug, "'Volume Dn MIC2: ', itoa(volGetLevel(inputs[MIC2]))";
-	send_string dvDebug, "'Volume Dn MIC3: ', itoa(volGetLevel(inputs[MIC3]))";
-	send_string dvDebug, "'Volume Dn MIC4: ', itoa(volGetLevel(inputs[MIC4]))";
-	send_string dvDebug, "'Volume Dn WLS1: ', itoa(volGetLevel(inputs[WLS1]))";
-	send_string dvDebug, "'Volume Dn WLS2: ', itoa(volGetLevel(inputs[WLS2]))";
-	send_string dvDebug, "'Volume Dn IPOD: ', itoa(volGetLevel(inputs[IPOD]))";
-	send_string dvDebug, "'Volume Dn   CD: ', itoa(volGetLevel(inputs[CD]))";
+        volArrayDecrement(inputs); // Decrement the volume down a step.
+        send_string dvDebug, "'Volume Dn MIC1: ', itoa(volGetLevel(inputs[MIC1]))";
+        send_string dvDebug, "'Volume Dn MIC2: ', itoa(volGetLevel(inputs[MIC2]))";
+        send_string dvDebug, "'Volume Dn MIC3: ', itoa(volGetLevel(inputs[MIC3]))";
+        send_string dvDebug, "'Volume Dn MIC4: ', itoa(volGetLevel(inputs[MIC4]))";
+        send_string dvDebug, "'Volume Dn WLS1: ', itoa(volGetLevel(inputs[WLS1]))";
+        send_string dvDebug, "'Volume Dn WLS2: ', itoa(volGetLevel(inputs[WLS2]))";
+        send_string dvDebug, "'Volume Dn IPOD: ', itoa(volGetLevel(inputs[IPOD]))";
+        send_string dvDebug, "'Volume Dn   CD: ', itoa(volGetLevel(inputs[CD]))";
     }
 }
 

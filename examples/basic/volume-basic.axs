@@ -40,9 +40,9 @@ PROGRAM_NAME='volume basic'
 (***********************************************************)
 DEFINE_DEVICE
 
-dvDebug = 0:0:0;	// For debug output.
+dvDebug = 0:0:0;        // For debug output.
 
-dvIO 	= 36000:1:0;	// Volume up/down button connections.
+dvIO    = 36000:1:0;    // Volume up/down button connections.
 
 (***********************************************************)
 (*               CONSTANT DEFINITIONS GO BELOW             *)
@@ -115,8 +115,8 @@ button_event[dvIO, 1]
 {
     PUSH:
     {
-	volIncrement(mic1); // Increment the volume up a step.
-	send_string dvDebug, "'Volume Up: ', itoa(volGetLevel(mic1))";
+        volIncrement(mic1); // Increment the volume up a step.
+        send_string dvDebug, "'Volume Up: ', itoa(volGetLevel(mic1))";
     }
 }
 
@@ -125,8 +125,8 @@ button_event[dvIO, 2]
 {
     PUSH:
     {
-	volDecrement(mic1); // Decrement the volume down a step.
-	send_string dvDebug, "'Volume Dn: ', itoa(volGetLevel(mic1))";
+        volDecrement(mic1); // Decrement the volume down a step.
+        send_string dvDebug, "'Volume Dn: ', itoa(volGetLevel(mic1))";
     }
 }
 

@@ -29,7 +29,7 @@
     The "...AsByte" functions can be applied to convert these levels
     to 8 bit (char) values.
 *************************************************************
-    Copyright 2011, 2012 Alex McLain
+    Copyright 2011, 2012, 2014 Alex McLain
     
     Licensed under the Apache License, Version 2.0 (the "License");
     you may not use this file except in compliance with the License.
@@ -44,7 +44,6 @@
     limitations under the License.
 ************************************************************)
 
-PROGRAM_NAME='amx-lib-volume'
 #if_not_defined AMX_LIB_VOLUME
 #define AMX_LIB_VOLUME 1
 (***********************************************************)
@@ -67,19 +66,19 @@ DEFINE_DEVICE
 DEFINE_CONSTANT
 
 // Volume control mute states.
-VOL_UNMUTED	= 0;
-VOL_MUTED	= 1;
+VOL_UNMUTED     = 0;
+VOL_MUTED       = 1;
 
 // Volume control dim states.
-VOL_DIM_OFF	= 0;
-VOL_DIM_ON	= 1;
+VOL_DIM_OFF     = 0;
+VOL_DIM_ON      = 1;
 
 // Function return messages.
-VOL_SUCCESS		=  0;	// Operation succeded.
-VOL_FAILED		= -1;	// Generic operation failure.
-VOL_LIMITED		= -2;	// Input value was limited and may not have reached its specified value.
-VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
-VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.
+VOL_SUCCESS             =  0;   // Operation succeded.
+VOL_FAILED              = -1;   // Generic operation failure.
+VOL_LIMITED             = -2;   // Input value was limited and may not have reached its specified value.
+VOL_PARAM_NOT_SET       = -3;   // Parameter was not set.
+VOL_OUT_OF_BOUNDS       = -4;   // Index boundry exceeded.
 
 (***********************************************************)
 (*              DATA TYPE DEFINITIONS GO BELOW             *)
@@ -89,29 +88,19 @@ DEFINE_TYPE
 // Volume control.
 struct volume
 {
-    integer lvl;	// Volume level.
-    integer mute;	// Mute status (VOL_MUTED | VOL_UNMUTED).
-    integer max;	// Max volume level limit.  Assumed full-on ($FFFF) if not set.
-    integer min;	// Min volume level limit.  Assumed full-off ($0000) if not set.
-    integer step;	// Amount to raise/lower the volume level when incremented or decremented.
-    char dim;		// Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
-    integer dimAmount;	// Amount to reduce the level when dim is on.
+    integer lvl;        // Volume level.
+    integer mute;       // Mute status (VOL_MUTED | VOL_UNMUTED).
+    integer max;        // Max volume level limit.  Assumed full-on ($FFFF) if not set.
+    integer min;        // Min volume level limit.  Assumed full-off ($0000) if not set.
+    integer step;       // Amount to raise/lower the volume level when incremented or decremented.
+    char dim;           // Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
+    integer dimAmount;  // Amount to reduce the level when dim is on.
 }
 
 (***********************************************************)
 (*              VARIABLE DEFINITIONS GO BELOW              *)
 (***********************************************************)
 DEFINE_VARIABLE
-
-(***********************************************************)
-(*              LATCHING DEFINITIONS GO BELOW              *)
-(***********************************************************)
-DEFINE_LATCHING
-
-(***********************************************************)
-(*         MUTUALLY EXCLUSIVE DEFINITIONS GO BELOW         *)
-(***********************************************************)
-DEFINE_MUTUALLY_EXCLUSIVE
 
 (***********************************************************)
 (*         SUBROUTINE/FUNCTION DEFINITIONS GO BELOW        *)
@@ -134,19 +123,19 @@ define_function volInit(volume v, integer lvl, char muteState, integer min, inte
     
     if (min <= v.max)
     {
-	v.min = min;
+        v.min = min;
     }
     else
     {
-	v.min = v.max;
+        v.min = v.max;
     }
     
     if (numSteps > 0) {
-	volSetNumberOfSteps(v, numSteps);
+        volSetNumberOfSteps(v, numSteps);
     }
     else
     {
-	v.step = 1;
+        v.step = 1;
     }
     
     volSetLevel(v, lvl); // Will limit the volume to min/max range.
@@ -167,30 +156,30 @@ define_function integer volGetLevel(volume v)
     // Do min/max adjustments.
     if (v.max > 0 && v.lvl > v.max)
     {
-	lvl = v.max;
+        lvl = v.max;
     }
     else if (v.min > 0 && v.lvl < v.min)
     {
-	lvl = v.min;
+        lvl = v.min;
     }
     else {
-	lvl = v.lvl;
+        lvl = v.lvl;
     }
     
     // Do dim adjustments.
     if (v.dim == VOL_DIM_ON)
     {
-	lvlDim = lvl - v.dimAmount;
-	
-	// Check for integer rollover.
-	if (lvlDim > lvl)
-	{
-	    lvl = 0;
-	}
-	else
-	{
-	    lvl = lvlDim;
-	}
+        lvlDim = lvl - v.dimAmount;
+        
+        // Check for integer rollover.
+        if (lvlDim > lvl)
+        {
+            lvl = 0;
+        }
+        else
+        {
+            lvl = lvlDim;
+        }
     }
     
     return lvl;
@@ -207,11 +196,11 @@ define_function integer volGetLevelPostMute(volume v)
 {
     if (v.mute == VOL_MUTED)
     {
-	return 0;
+        return 0;
     }
     else
     {
-	return volGetLevel(v);
+        return volGetLevel(v);
     }
 }
 
@@ -256,11 +245,11 @@ define_function char volGetTouchPanelLevel(volume v)
     // If the max limit is not set, it is not being used and max is all bits on.
     if (v.max == 0)
     {
-	range = $FFFF - v.min;
+        range = $FFFF - v.min;
     }
     else
     {
-	range = v.max - v.min;
+        range = v.max - v.min;
     }
     
     scaled = (v.lvl - v.min) * 255 / range;
@@ -280,18 +269,18 @@ define_function sinteger volSetLevel(volume v, integer value)
 {
     if (v.max > 0 && value > v.max)
     {
-	v.lvl = v.max;
-	return VOL_LIMITED;
+        v.lvl = v.max;
+        return VOL_LIMITED;
     }
     else if (v.min > 0 && value < v.min)
     {
-	v.lvl = v.min;
-	return VOL_LIMITED;
+        v.lvl = v.min;
+        return VOL_LIMITED;
     }
     else
     {
-	v.lvl = value;
-	return VOL_SUCCESS;
+        v.lvl = value;
+        return VOL_SUCCESS;
     }
 }
 
@@ -325,8 +314,8 @@ define_function sinteger volSetMax(volume v, integer value)
     
     if (v.min > v.max)
     {
-	v.min = v.max;
-	result = VOL_LIMITED;
+        v.min = v.max;
+        result = VOL_LIMITED;
     }
     
     volSetLevel(v, v.lvl); // Set volume level to itself to check min/max boundries.
@@ -360,8 +349,8 @@ define_function sinteger volSetMin(volume v, integer value)
     
     if (v.max < v.min)
     {
-	v.max = v.min;
-	result = VOL_LIMITED;
+        v.max = v.min;
+        result = VOL_LIMITED;
     }
     
     volSetLevel(v, v.lvl); // Set volume level to itself to check min/max boundries.
@@ -407,11 +396,11 @@ define_function integer volToggleMute(volume v)
 {
     if (v.mute == false)
     {
-	v.mute = VOL_MUTED;
+        v.mute = VOL_MUTED;
     }
     else
     {
-	v.mute = VOL_UNMUTED;
+        v.mute = VOL_UNMUTED;
     }
     
     return volGetMuteState(v);
@@ -577,7 +566,7 @@ define_function volArrayInit(volume v[], integer lvl, char muteState, integer mi
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volInit(v[i], lvl, muteState, min, max, numSteps);
+        volInit(v[i], lvl, muteState, min, max, numSteps);
     }
 }
 
@@ -621,8 +610,8 @@ define_function sinteger volArraySetLevel(volume v[], integer value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetLevel(v[i], value);
-	if (instanceResult != VOL_SUCCESS) result = instanceResult;
+        instanceResult = volSetLevel(v[i], value);
+        if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
     return instanceResult;
@@ -641,8 +630,8 @@ define_function sinteger volArraySetLevelAsByte(volume v[], char value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetLevelAsByte(v[i], value);
-	if (instanceResult != VOL_SUCCESS) result = instanceResult;
+        instanceResult = volSetLevelAsByte(v[i], value);
+        if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
     return result;
@@ -664,8 +653,8 @@ define_function sinteger volArraySetMax(volume v[], integer value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetMax(v[i], value);
-	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
+        instanceResult = volSetMax(v[i], value);
+        if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
     return result;
@@ -687,8 +676,8 @@ define_function sinteger volArraySetMaxAsByte(volume v[], char value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetMaxAsByte(v[i], value);
-	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
+        instanceResult = volSetMaxAsByte(v[i], value);
+        if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
     return result;
@@ -710,8 +699,8 @@ define_function sinteger volArraySetMin(volume v[], integer value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetMin(v[i], value);
-	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
+        instanceResult = volSetMin(v[i], value);
+        if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
     return result;
@@ -733,8 +722,8 @@ define_function sinteger volArraySetMinAsByte(volume v[], char value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetMinAsByte(v[i], value);
-	if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
+        instanceResult = volSetMinAsByte(v[i], value);
+        if (instanceResult == VOL_LIMITED) result = VOL_LIMITED;
     }
     
     return result;
@@ -749,7 +738,7 @@ define_function volArraySetStep(volume v[], integer value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetStep(v[i], value);
+        volSetStep(v[i], value);
     }
 }
 
@@ -762,7 +751,7 @@ define_function volArraySetStepAsByte(volume v[], char value)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetStepAsByte(v[i], value);
+        volSetStepAsByte(v[i], value);
     }
 }
 
@@ -780,8 +769,8 @@ define_function sinteger volArraySetNumberOfSteps(volume v[], integer steps)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volSetNumberOfSteps(v[i], steps);
-	if (instanceResult != VOL_SUCCESS) result = instanceResult;
+        instanceResult = volSetNumberOfSteps(v[i], steps);
+        if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
     return result;
@@ -796,7 +785,7 @@ define_function volArrayMute(volume v[])
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volMute(v[i]);
+        volMute(v[i]);
     }
 }
 
@@ -809,7 +798,7 @@ define_function volArrayUnmute(volume v[])
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volUnmute(v[i]);
+        volUnmute(v[i]);
     }
 }
 
@@ -827,8 +816,8 @@ define_function sinteger volArrayIncrement(volume v[])
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volIncrement(v[i]);
-	if (instanceResult != VOL_SUCCESS) result = instanceResult;
+        instanceResult = volIncrement(v[i]);
+        if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
     return result;
@@ -848,8 +837,8 @@ define_function sinteger volArrayDecrement(volume v[])
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	instanceResult = volDecrement(v[i]);
-	if (instanceResult != VOL_SUCCESS) result = instanceResult;
+        instanceResult = volDecrement(v[i]);
+        if (instanceResult != VOL_SUCCESS) result = instanceResult;
     }
     
     return result;
@@ -864,7 +853,7 @@ define_function volArrayDimOn(volume v[])
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volDimOn(v[i]);
+        volDimOn(v[i]);
     }
 }
 
@@ -878,7 +867,7 @@ define_function volArrayDimOff(volume v[])
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volDimOff(v[i]);
+        volDimOff(v[i]);
     }
 }
 
@@ -891,7 +880,7 @@ define_function volArraySetDimAmount(volume v[], integer amount)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetDimAmount(v[i], amount);
+        volSetDimAmount(v[i], amount);
     }
 }
 
@@ -906,7 +895,7 @@ define_function volArraySetDimAmountAsByte(volume v[], char amount)
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-	volSetDimAmountAsByte(v[i], amount);
+        volSetDimAmountAsByte(v[i], amount);
     }
 }
 
