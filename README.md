@@ -6,7 +6,7 @@ This library contains the code to set up and manipulate volume controls from wit
 
 *THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH THE AMX ORGANIZATION*
 
-{:TOC}
+[TOC]
 
 
 ## Download
