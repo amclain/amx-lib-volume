@@ -1,0 +1,408 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>
+  File: README
+  
+    &mdash; Documentation by YARD 0.8.7.4
+  
+</title>
+
+  <link rel="stylesheet" href="css/style.css" type="text/css" charset="utf-8" />
+
+  <link rel="stylesheet" href="css/common.css" type="text/css" charset="utf-8" />
+
+<script type="text/javascript" charset="utf-8">
+  hasFrames = window.top.frames.main ? true : false;
+  relpath = '';
+  framesUrl = "frames.html#!file.README.html";
+</script>
+
+
+  <script type="text/javascript" charset="utf-8" src="js/jquery.js"></script>
+
+  <script type="text/javascript" charset="utf-8" src="js/app.js"></script>
+
+
+  </head>
+  <body>
+    <div id="header">
+      <div id="menu">
+  
+    <a href="_index.html">Index</a> &raquo; 
+    <span class="title">File: README</span>
+  
+
+  <div class="noframes"><span class="title">(</span><a href="." target="_top">no frames</a><span class="title">)</span></div>
+</div>
+
+      <div id="search">
+  
+    <a class="full_list_link" id="class_list_link"
+        href="class_list.html">
+      Class List
+    </a>
+  
+    <a class="full_list_link" id="method_list_link"
+        href="method_list.html">
+      Method List
+    </a>
+  
+    <a class="full_list_link" id="file_list_link"
+        href="file_list.html">
+      File List
+    </a>
+  
+</div>
+      <div class="clear"></div>
+    </div>
+
+    <iframe id="search_frame"></iframe>
+
+    <div id="content"><div id='filecontents'>
+<h1 id="label-AMX+VOLUME+CONTROL+LIBRARY">AMX VOLUME CONTROL LIBRARY</h1>
+
+<p>amx-lib-volume</p>
+
+<p>This library contains the code to set up and manipulate volume controls
+from within an AMX Netlinx project.</p>
+
+<p><em>THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH THE AMX
+ORGANIZATION</em></p>
+
+<h2 id="label-Overview">Overview</h2>
+
+<p>[TOC]</p>
+
+<h2 id="label-Download">Download</h2>
+
+<p><strong>Git Users:</strong></p>
+
+<p><a
+href="https://github.com/amclain/amx-lib-volume">github.com/amclain/amx-lib-volume</a></p>
+
+<p><strong>Mercurial Users:</strong></p>
+
+<p><a
+href="https://bitbucket.org/amclain/amx-lib-volume">bitbucket.org/amclain/amx-lib-volume</a></p>
+
+<p><strong>Zip File:</strong></p>
+
+<p>Both sites above offer a feature to download the source code as a zip file.
+Any stable release, as well as the current development snapshot can be
+downloaded.</p>
+
+<h2 id="label-Issues%2C+Bugs%2C+Feature+Requests">Issues, Bugs, Feature Requests</h2>
+
+<p>Any bugs and feature requests should be reported on the GitHub issue
+tracker:</p>
+
+<p><a
+href="https://github.com/amclain/amx-lib-volume/issues">github.com/amclain/amx-lib-volume/issues</a></p>
+
+<p><strong>Pull requests are preferred via GitHub.</strong></p>
+
+<p>Mercurial users can use <a href="http://hg-git.github.io/">Hg-Git</a> to
+interact with GitHub repositories.</p>
+
+<h2 id="label-Usage">Usage</h2>
+
+<h3 id="label-Conventions">Conventions</h3>
+
+<p>“VOL_” prefixes all library constants, and “vol” prefixes all library
+functions (without quotes). “volArray” prefixes any functions that operate
+on an array of structure “volume”.</p>
+
+<p>Constants are snake case (underscores separate words) with all uppercase
+letters.</p>
+
+<p>Function names are camel case with the first letter being lowercase. If
+using the snake case wrapper file, then all function names are snake case
+with all lowercase characters.</p>
+
+<p>Volume levels have a native resolution of 16 bits (integer). The “…AsByte”
+functions can be applied to convert these levels to 8 bit (char) values.</p>
+
+<h3 id="label-Volume+Control+Structure">Volume Control Structure</h3>
+
+<p>All of the data for a volume control is stored in the “volume” structure.
+Although it is possible to operate on the structure&#39;s properties
+directly, this method is NOT recommended. Instead, <a
+href="function-list">helper functions</a> are provided to perform
+operations on the structure.</p>
+
+<pre class="code ruby"><code class="ruby">struct volume
+    {
+        integer lvl;    // Volume level.
+        char mute;      // Mute status (VOL_MUTED | VOL_UNMUTED).
+        integer max;    // Max volume level limit.  Assumed full-on ($FFFF) if not set.
+        integer min;    // Min volume level limit.  Assumed full-off ($0000) if not set.
+        integer step;   // Amount to raise/lower the volume level when incremented or
+                        // decremented.
+        char dim;             // Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
+        integer dimAmount;    // Amount to reduce the level when dim is on.
+    }</code></pre>
+
+<h3 id="label-Constants">Constants</h3>
+
+<p>In order to make it easier to distinguish a control&#39;s mute state when
+reading code, the constants VOL_MUTED and VOL_UNMUTED are defined.</p>
+
+<pre class="code ruby"><code class="ruby">// Volume control mute states.
+    VOL_UNMUTED	= 0;
+    VOL_MUTED	= 1;</code></pre>
+
+<p>Likewise, the same applies to the level dim state.</p>
+
+<pre class="code ruby"><code class="ruby">// Volume control dim states.
+    VOL_DIM_OFF	= 0;
+    VOL_DIM_ON	= 1;</code></pre>
+
+<p>Some of the functions in the volume control library return a status message
+of type sinteger. These codes are mapped to the following constants, with
+failures being negative numbers.</p>
+
+<pre class="code ruby"><code class="ruby">// Function return messages.
+    VOL_SUCCESS		=  0;	// Operation succeded.
+    VOL_FAILED		= -1;	// Generic operation failure.
+    VOL_LIMITED		= -2;	// Input value was limited and may not have reached its
+                            // specified value.
+    VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
+    VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.</code></pre>
+
+<h3 id="label-Functions">Functions</h3>
+
+<h4 id="label-Including+The+Library">Including The Library</h4>
+
+<p>To include the volume control library, place the include statement just
+before the DEFINE_DEVICE section.</p>
+
+<pre class="code ruby"><code class="ruby">// Include the volume control library.
+    #include &#39;amx-lib-volume&#39;
+
+    (***********************************************************)
+    (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
+    (***********************************************************)
+    DEFINE_DEVICE</code></pre>
+
+<h4 id="label-Initializing+A+Control">Initializing A Control</h4>
+
+<p>First, define a variable of type “volume” to act as a volume control.</p>
+
+<pre class="code ruby"><code class="ruby">(***********************************************************)
+    (*               VARIABLE DEFINITIONS GO BELOW             *)
+    (***********************************************************)
+    DEFINE_VARIABLE
+    
+    volume mic1; // Define a volume control.</code></pre>
+
+<p>Call the helper function volInit() to initialize the control with a level,
+mute state, min limit, max limit, and number of steps between the min and
+max limits. The min, max, and step parameters can be set to 0 if
+they&#39;re not needed.</p>
+
+<pre class="code ruby"><code class="ruby">(***********************************************************)
+    (*                STARTUP CODE GOES BELOW                  *)
+    (***********************************************************)
+    DEFINE_START
+
+    volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5); // Initialize the volume control.</code></pre>
+
+<p>Note that although the volume level “0” is passed, the min limit will be
+applied, resulting in an actual initialization level of 10,000.</p>
+
+<h4 id="label-Initializing+An+Array+Of+Controls">Initializing An Array Of Controls</h4>
+
+<p>Initializing an array of volume controls is just as easy as initializing a
+single control, as the library contains functions to operate on arrays.
+Volume control arrays can be used to group devices, link channels, create
+zones, etc.</p>
+
+<p>First, define an array of type “volume”.</p>
+
+<pre class="code ruby"><code class="ruby">(***********************************************************)
+    (*               VARIABLE DEFINITIONS GO BELOW             *)
+    (***********************************************************)
+    DEFINE_VARIABLE
+
+    // Define a volume control array for the input devices.
+    volume inputs[8];</code></pre>
+
+<p>Call the helper function volArrayInit() to initialize all controls in the
+array with a level, mute state, min limit, max limit, and number of steps.
+The min, max, and step parameters can be set to 0 if they&#39;re not
+needed.</p>
+
+<pre class="code ruby"><code class="ruby">(***********************************************************)
+    (*                STARTUP CODE GOES BELOW                  *)
+    (***********************************************************)
+    DEFINE_START
+
+    // Initialize the array of volume controls.
+    volArrayInit(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);</code></pre>
+
+<p>All eight volume controls in the array are now ready for use!</p>
+
+<h4 id="label-Getting+Volume+Levels">Getting Volume Levels</h4>
+
+<p>To read the level of a volume control, use volGetLevel() or
+volGetLevelAsByte(). The function takes min/max limits into account.</p>
+
+<pre class="code ruby"><code class="ruby">level = volGetLevel(mic1); // Saves the volume level of mic 1 to &quot;level&quot;.</code></pre>
+
+<p>If you want to get the level while taking the mute state into account, use
+the funtion volGetLevelPostMute(). This can be used for updating an audio
+DSP without having to manage its mute control.</p>
+
+<pre class="code ruby"><code class="ruby">level = volGetLevelPostMute(mic1); // Returns the volume level if unmuted,
+                                       // or 0 if muted.</code></pre>
+
+<p>The “…AsByte” functions provide an easy way to scale values down to a range
+of 0-255, which is convenient for updating bar graphs on touch panels.</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_send_level'>send_level</span> <span class='id identifier rubyid_dvTouchPanel'>dvTouchPanel</span><span class='comma'>,</span> <span class='const'>LEVEL_MIC_1</span><span class='comma'>,</span> <span class='id identifier rubyid_volGetLevelAsByte'>volGetLevelAsByte</span><span class='lparen'>(</span><span class='id identifier rubyid_mic1'>mic1</span><span class='rparen'>)</span><span class='semicolon'>;</span></code></pre>
+
+<h4 id="label-Setting+Volume+Levels">Setting Volume Levels</h4>
+
+<p>Setting a volume level is performed by calling volSetLevel() or
+volSetLevelAsByte(). This function takes into account min/max limits, but
+<em>does not</em> affect mute status. This means volume levels can be
+adjusted while a channel is muted, and the change will be heard once the
+channel is unmuted.</p>
+
+<pre class="code ruby"><code class="ruby">volSetLevel(mic1, 15000); // Set the volume of mic 1 to 15,000.</code></pre>
+
+<p>Volume levels for all of the controls in an array can also be set by
+calling volArraySetLevel() or volArraySetLevelAsByte(). This is helpful if
+you have an array representing linked channels.</p>
+
+<pre class="code ruby"><code class="ruby">volArraySetLevel(inputs, 15000); // Set all levels in the input array to 15,000</code></pre>
+
+<h4 id="label-Incrementing+Levels">Incrementing Levels</h4>
+
+<p>“Hey Bob, my mic needs to be louder! Set the volume to fifteen thousand!”
+“That&#39;s still not loud enough! Try twenty thousand!” “It&#39;s too loud
+now! Set it to nineteen thousand!” “Almost there! How about nineteen
+thousand and one? That&#39;s it! Keep it at nineteen thousand and one!”</p>
+
+<p>Ok, so end-users aren&#39;t going to be setting volume levels by entering
+16-bit integer values. That&#39;s where the volIncrement() and
+volDecrement() functions come into play. These functions can be called when
+a UI control is pressed.</p>
+
+<p>Let&#39;s back up for a second. Remember the last parameter when
+initializing a volume control array?</p>
+
+<pre class="code ruby"><code class="ruby"><span class='id identifier rubyid_volInit'>volInit</span><span class='lparen'>(</span><span class='id identifier rubyid_mic1'>mic1</span><span class='comma'>,</span> <span class='int'>0</span><span class='comma'>,</span> <span class='const'>VOL_UNMUTED</span><span class='comma'>,</span> <span class='int'>10000</span><span class='comma'>,</span> <span class='int'>20000</span><span class='comma'>,</span> <span class='int'>5</span><span class='rparen'>)</span><span class='semicolon'>;</span></code></pre>
+
+<p>The “5” specifies that there are five steps between the min and max limits,
+which in this example is a step value of 2000. The step value is the amount
+that volIncrement() and volDecrement() increase or decrease a control&#39;s
+volume based on its current level. Here&#39;s an example.</p>
+
+<pre class="code ruby"><code class="ruby">Mic 1 starting level: 10,000
+
+    Remember, the min value 10,000 overrides the level 0 passed during
+    initialization.
+
+    STEP    VOL LEVEL
+     5 ---- 20,000    MAX
+       |  |
+     4 ---- 18,000
+       |  |
+     3 ---- 16,000
+       |  |
+     2 ---- 14,000
+       |  |
+     1 ---- 12,000
+       |  |
+     0 ---- 10,000    MIN    &lt;-- CURRENT LEVEL
+
+
+    /********************************************************/
+
+    volIncrement(mic1); // Increment mic 1&#39;s volume by 1 step.
+
+    /********************************************************/
+
+    Mic 1 level: 12,000
+    
+    STEP    VOL LEVEL
+     5 ---- 20,000    MAX
+       |  |
+     4 ---- 18,000
+       |  |
+     3 ---- 16,000
+       |  |
+     2 ---- 14,000
+       |  |
+     1 ---- 12,000    &lt;-- CURRENT LEVEL
+       |XX|
+     0 ---- 10,000    MIN</code></pre>
+
+<p>After initialization, a control&#39;s step value can be set two ways: 1.
+volSetStep() sets the volume level amount to increase or decrease when
+incremented, or 2. volSetNumberOfSteps() sets the number of steps between
+the min and max limits.</p>
+
+<pre class="code ruby"><code class="ruby">volSetStep(mic1, 2000);     // Level will increase by 2,000 each time
+                                // volIncrement() is called.
+
+    /*  OR  */
+    
+    volSetNumberOfSteps(mic1, 5);   // volIncrement() can be called 5 times before
+                                    // the max limit is reached.</code></pre>
+
+<h4 id="label-Ramping">Ramping</h4>
+
+<p>Volume ramping can be achieved by calling volIncrement() and volDecrement()
+from <em>PUSH</em> and <em>HOLD</em> events. The higher the number of
+steps, the smoother the level will appear to ramp.</p>
+
+<pre class="code ruby"><code class="ruby">(***********************************************************)
+    (*              VARIABLE DEFINITIONS GO BELOW              *)
+    (***********************************************************)
+    
+    DEFINE_VARIABLE    
+    volume mic1;
+    
+    (***********************************************************)
+    (*                 STARTUP CODE GOES BELOW                 *)
+    (***********************************************************)
+    
+    DEFINE_START
+    volInit(mic1, 0, VOL_UNMUTED, 0, 100, 50);
+    
+    (***********************************************************)
+    (*                   THE EVENTS GO BELOW                   *)
+    (***********************************************************)
+    
+    DEFINE_EVENT
+    BUTTON_EVENT[dvTouchPanel, BTN_VOLUME_UP]
+    {
+        PUSH:
+        {
+            volIncrement(mic1);
+        }
+        
+        HOLD[.5, REPEAT]:
+        {
+            volIncrement(mic1);
+        }
+    }</code></pre>
+
+<h4 id="label-Examples">Examples</h4>
+
+<p>Example projects are packaged with the source code.</p>
+</div></div>
+
+    <div id="footer">
+  Generated on Mon Aug  4 17:44:43 2014 by
+  <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
+  0.8.7.4 (ruby-2.0.0).
+</div>
+
+  </body>
+</html>

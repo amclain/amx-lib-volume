@@ -42,7 +42,7 @@ Mercurial users can use [Hg-Git](http://hg-git.github.io/) to interact with
 GitHub repositories.
 
 
-## Use
+## Usage
 
 ### Conventions
 
