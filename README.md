@@ -6,6 +6,8 @@ This library contains the code to set up and manipulate volume controls from wit
 
 *THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH THE AMX ORGANIZATION*
 
+## Overview
+
 [TOC]
 
 
@@ -40,7 +42,7 @@ Mercurial users can use [Hg-Git](http://hg-git.github.io/) to interact with
 GitHub repositories.
 
 
-## Overview
+## Use
 
 ### Conventions
 
