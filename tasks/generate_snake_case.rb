@@ -138,6 +138,7 @@ module AMXLibVolume
           end
           
           puts 'Done.'
+          puts ''
         end
       end
       

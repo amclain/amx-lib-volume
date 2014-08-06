@@ -62,17 +62,17 @@ Volume levels have a native resolution of 16 bits (integer). The "...AsByte" fun
 All of the data for a volume control is stored in the "volume" structure.  Although it is possible to operate on the structure's properties directly, this method is NOT recommended.  Instead, [helper functions](function-list) are provided to perform operations on the structure.
 
 ``` c
-    struct volume
-    {
-        integer lvl;    // Volume level.
-        char mute;      // Mute status (VOL_MUTED | VOL_UNMUTED).
-        integer max;    // Max volume level limit.  Assumed full-on ($FFFF) if not set.
-        integer min;    // Min volume level limit.  Assumed full-off ($0000) if not set.
-        integer step;   // Amount to raise/lower the volume level when incremented or
-                        // decremented.
-        char dim;             // Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
-        integer dimAmount;    // Amount to reduce the level when dim is on.
-    }
+struct volume
+{
+    integer lvl;    // Volume level.
+    char mute;      // Mute status (VOL_MUTED | VOL_UNMUTED).
+    integer max;    // Max volume level limit.  Assumed full-on ($FFFF) if not set.
+    integer min;    // Min volume level limit.  Assumed full-off ($0000) if not set.
+    integer step;   // Amount to raise/lower the volume level when incremented or
+                    // decremented.
+    char dim;             // Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
+    integer dimAmount;    // Amount to reduce the level when dim is on.
+}
 ```
 
 ### Constants
@@ -80,29 +80,29 @@ All of the data for a volume control is stored in the "volume" structure.  Altho
 In order to make it easier to distinguish a control's mute state when reading code, the constants VOL_MUTED and VOL_UNMUTED are defined.
 
 ``` c
-    // Volume control mute states.
-    VOL_UNMUTED	= 0;
-    VOL_MUTED	= 1;
+// Volume control mute states.
+VOL_UNMUTED	= 0;
+VOL_MUTED	= 1;
 ```
 
 Likewise, the same applies to the level dim state.
 
 ``` c
-    // Volume control dim states.
-    VOL_DIM_OFF	= 0;
-    VOL_DIM_ON	= 1;
+// Volume control dim states.
+VOL_DIM_OFF	= 0;
+VOL_DIM_ON	= 1;
 ```
 
 Some of the functions in the volume control library return a status message of type sinteger.  These codes are mapped to the following constants, with failures being negative numbers.
 
 ``` c
-    // Function return messages.
-    VOL_SUCCESS		=  0;	// Operation succeded.
-    VOL_FAILED		= -1;	// Generic operation failure.
-    VOL_LIMITED		= -2;	// Input value was limited and may not have reached its
-                            // specified value.
-    VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
-    VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.
+// Function return messages.
+VOL_SUCCESS		=  0;	// Operation succeded.
+VOL_FAILED		= -1;	// Generic operation failure.
+VOL_LIMITED		= -2;	// Input value was limited and may not have reached its
+                        // specified value.
+VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
+VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.
 ```
 
 
@@ -113,13 +113,13 @@ Some of the functions in the volume control library return a status message of t
 To include the volume control library, place the include statement just before the DEFINE_DEVICE section.
 
 ``` c
-    // Include the volume control library.
-    #include 'amx-lib-volume'
+// Include the volume control library.
+#include 'amx-lib-volume'
 
-    (***********************************************************)
-    (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
-    (***********************************************************)
-    DEFINE_DEVICE
+(***********************************************************)
+(*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
+(***********************************************************)
+DEFINE_DEVICE
 ```
 
 
@@ -128,23 +128,23 @@ To include the volume control library, place the include statement just before t
 First, define a variable of type "volume" to act as a volume control.
 
 ``` c
-    (***********************************************************)
-    (*               VARIABLE DEFINITIONS GO BELOW             *)
-    (***********************************************************)
-    DEFINE_VARIABLE
-    
-    volume mic1; // Define a volume control.
+(***********************************************************)
+(*               VARIABLE DEFINITIONS GO BELOW             *)
+(***********************************************************)
+DEFINE_VARIABLE
+
+volume mic1; // Define a volume control.
 ```
 
 Call the helper function volInit() to initialize the control with a level, mute state, min limit, max limit, and number of steps between the min and max limits.  The min, max, and step parameters can be set to 0 if they're not needed.
 
 ``` c
-    (***********************************************************)
-    (*                STARTUP CODE GOES BELOW                  *)
-    (***********************************************************)
-    DEFINE_START
+(***********************************************************)
+(*                STARTUP CODE GOES BELOW                  *)
+(***********************************************************)
+DEFINE_START
 
-    volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5); // Initialize the volume control.
+volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5); // Initialize the volume control.
 ```
 
 Note that although the volume level "0" is passed, the min limit will be applied, resulting in an actual initialization level of 10,000.
@@ -157,25 +157,25 @@ Initializing an array of volume controls is just as easy as initializing a singl
 First, define an array of type "volume".
 
 ``` c
-    (***********************************************************)
-    (*               VARIABLE DEFINITIONS GO BELOW             *)
-    (***********************************************************)
-    DEFINE_VARIABLE
+(***********************************************************)
+(*               VARIABLE DEFINITIONS GO BELOW             *)
+(***********************************************************)
+DEFINE_VARIABLE
 
-    // Define a volume control array for the input devices.
-    volume inputs[8];
+// Define a volume control array for the input devices.
+volume inputs[8];
 ```
 
 Call the helper function volArrayInit() to initialize all controls in the array with a level, mute state, min limit, max limit, and number of steps.  The min, max, and step parameters can be set to 0 if they're not needed.
 
 ``` c
-    (***********************************************************)
-    (*                STARTUP CODE GOES BELOW                  *)
-    (***********************************************************)
-    DEFINE_START
+(***********************************************************)
+(*                STARTUP CODE GOES BELOW                  *)
+(***********************************************************)
+DEFINE_START
 
-    // Initialize the array of volume controls.
-    volArrayInit(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);
+// Initialize the array of volume controls.
+volArrayInit(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);
 ```
 
 All eight volume controls in the array are now ready for use!
@@ -186,20 +186,20 @@ All eight volume controls in the array are now ready for use!
 To read the level of a volume control, use volGetLevel() or volGetLevelAsByte().  The function takes min/max limits into account.
 
 ``` c
-    level = volGetLevel(mic1); // Saves the volume level of mic 1 to "level".
+level = volGetLevel(mic1); // Saves the volume level of mic 1 to "level".
 ```
 
 If you want to get the level while taking the mute state into account, use the funtion volGetLevelPostMute(). This can be used for updating an audio DSP without having to manage its mute control.
 
 ``` c
-    level = volGetLevelPostMute(mic1); // Returns the volume level if unmuted,
-                                       // or 0 if muted.
+level = volGetLevelPostMute(mic1); // Returns the volume level if unmuted,
+                                   // or 0 if muted.
 ```
 
 The "...AsByte" functions provide an easy way to scale values down to a range of 0-255, which is convenient for updating bar graphs on touch panels.
 
 ``` c
-    send_level dvTouchPanel, LEVEL_MIC_1, volGetLevelAsByte(mic1);
+send_level dvTouchPanel, LEVEL_MIC_1, volGetLevelAsByte(mic1);
 ```
 
 
@@ -208,13 +208,13 @@ The "...AsByte" functions provide an easy way to scale values down to a range of
 Setting a volume level is performed by calling volSetLevel() or volSetLevelAsByte().  This function takes into account min/max limits, but *does not* affect mute status.  This means volume levels can be adjusted while a channel is muted, and the change will be heard once the channel is unmuted.
 
 ``` c
-    volSetLevel(mic1, 15000); // Set the volume of mic 1 to 15,000.
+volSetLevel(mic1, 15000); // Set the volume of mic 1 to 15,000.
 ```
 
 Volume levels for all of the controls in an array can also be set by calling volArraySetLevel() or volArraySetLevelAsByte().  This is helpful if you have an array representing linked channels.
 
 ``` c
-    volArraySetLevel(inputs, 15000); // Set all levels in the input array to 15,000
+volArraySetLevel(inputs, 15000); // Set all levels in the input array to 15,000
 ```
 
 #### Incrementing Levels
@@ -229,51 +229,51 @@ Ok, so end-users aren't going to be setting volume levels by entering 16-bit int
 Let's back up for a second.  Remember the last parameter when initializing a volume control array?
 
 ``` c
-    volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5);
+volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5);
 ```
 
 The "5" specifies that there are five steps between the min and max limits, which in this example is a step value of 2000.  The step value is the amount that volIncrement() and volDecrement() increase or decrease a control's volume based on its current level.  Here's an example.
 
 ``` c
-    Mic 1 starting level: 10,000
+Mic 1 starting level: 10,000
 
-    Remember, the min value 10,000 overrides the level 0 passed during
-    initialization.
+Remember, the min value 10,000 overrides the level 0 passed during
+initialization.
 
-    STEP    VOL LEVEL
-     5 ---- 20,000    MAX
-       |  |
-     4 ---- 18,000
-       |  |
-     3 ---- 16,000
-       |  |
-     2 ---- 14,000
-       |  |
-     1 ---- 12,000
-       |  |
-     0 ---- 10,000    MIN    <-- CURRENT LEVEL
+STEP    VOL LEVEL
+ 5 ---- 20,000    MAX
+   |  |
+ 4 ---- 18,000
+   |  |
+ 3 ---- 16,000
+   |  |
+ 2 ---- 14,000
+   |  |
+ 1 ---- 12,000
+   |  |
+ 0 ---- 10,000    MIN    <-- CURRENT LEVEL
 
 
-    /********************************************************/
+/********************************************************/
 
-    volIncrement(mic1); // Increment mic 1's volume by 1 step.
+volIncrement(mic1); // Increment mic 1's volume by 1 step.
 
-    /********************************************************/
+/********************************************************/
 
-    Mic 1 level: 12,000
-    
-    STEP    VOL LEVEL
-     5 ---- 20,000    MAX
-       |  |
-     4 ---- 18,000
-       |  |
-     3 ---- 16,000
-       |  |
-     2 ---- 14,000
-       |  |
-     1 ---- 12,000    <-- CURRENT LEVEL
-       |XX|
-     0 ---- 10,000    MIN
+Mic 1 level: 12,000
+
+STEP    VOL LEVEL
+ 5 ---- 20,000    MAX
+   |  |
+ 4 ---- 18,000
+   |  |
+ 3 ---- 16,000
+   |  |
+ 2 ---- 14,000
+   |  |
+ 1 ---- 12,000    <-- CURRENT LEVEL
+   |XX|
+ 0 ---- 10,000    MIN
 ```
 
 After initialization, a control's step value can be set two ways:
@@ -281,13 +281,13 @@ After initialization, a control's step value can be set two ways:
 2. volSetNumberOfSteps() sets the number of steps between the min and max limits.
 
 ``` c
-    volSetStep(mic1, 2000);     // Level will increase by 2,000 each time
-                                // volIncrement() is called.
+volSetStep(mic1, 2000);     // Level will increase by 2,000 each time
+                            // volIncrement() is called.
 
-    /*  OR  */
-    
-    volSetNumberOfSteps(mic1, 5);   // volIncrement() can be called 5 times before
-                                    // the max limit is reached.
+/*  OR  */
+
+volSetNumberOfSteps(mic1, 5);   // volIncrement() can be called 5 times before
+                                // the max limit is reached.
 ```
 
 
@@ -296,37 +296,37 @@ After initialization, a control's step value can be set two ways:
 Volume ramping can be achieved by calling volIncrement() and volDecrement() from *PUSH* and *HOLD* events. The higher the number of steps, the smoother the level will appear to ramp.
 
 ``` c
-    (***********************************************************)
-    (*              VARIABLE DEFINITIONS GO BELOW              *)
-    (***********************************************************)
-    
-    DEFINE_VARIABLE    
-    volume mic1;
-    
-    (***********************************************************)
-    (*                 STARTUP CODE GOES BELOW                 *)
-    (***********************************************************)
-    
-    DEFINE_START
-    volInit(mic1, 0, VOL_UNMUTED, 0, 100, 50);
-    
-    (***********************************************************)
-    (*                   THE EVENTS GO BELOW                   *)
-    (***********************************************************)
-    
-    DEFINE_EVENT
-    BUTTON_EVENT[dvTouchPanel, BTN_VOLUME_UP]
+(***********************************************************)
+(*              VARIABLE DEFINITIONS GO BELOW              *)
+(***********************************************************)
+
+DEFINE_VARIABLE    
+volume mic1;
+
+(***********************************************************)
+(*                 STARTUP CODE GOES BELOW                 *)
+(***********************************************************)
+
+DEFINE_START
+volInit(mic1, 0, VOL_UNMUTED, 0, 100, 50);
+
+(***********************************************************)
+(*                   THE EVENTS GO BELOW                   *)
+(***********************************************************)
+
+DEFINE_EVENT
+BUTTON_EVENT[dvTouchPanel, BTN_VOLUME_UP]
+{
+    PUSH:
     {
-        PUSH:
-        {
-            volIncrement(mic1);
-        }
-        
-        HOLD[.5, REPEAT]:
-        {
-            volIncrement(mic1);
-        }
+        volIncrement(mic1);
     }
+    
+    HOLD[.5, REPEAT]:
+    {
+        volIncrement(mic1);
+    }
+}
 ```
 
 

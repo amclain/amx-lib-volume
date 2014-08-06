@@ -134,16 +134,16 @@ href="function-list">helper functions</a> are provided to perform
 operations on the structure.</p>
 
 <pre class="code ruby"><code class="ruby">struct volume
-    {
-        integer lvl;    // Volume level.
-        char mute;      // Mute status (VOL_MUTED | VOL_UNMUTED).
-        integer max;    // Max volume level limit.  Assumed full-on ($FFFF) if not set.
-        integer min;    // Min volume level limit.  Assumed full-off ($0000) if not set.
-        integer step;   // Amount to raise/lower the volume level when incremented or
-                        // decremented.
-        char dim;             // Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
-        integer dimAmount;    // Amount to reduce the level when dim is on.
-    }</code></pre>
+{
+    integer lvl;    // Volume level.
+    char mute;      // Mute status (VOL_MUTED | VOL_UNMUTED).
+    integer max;    // Max volume level limit.  Assumed full-on ($FFFF) if not set.
+    integer min;    // Min volume level limit.  Assumed full-off ($0000) if not set.
+    integer step;   // Amount to raise/lower the volume level when incremented or
+                    // decremented.
+    char dim;             // Level dim status (VOL_DIM_ON | VOL_DIM_OFF).
+    integer dimAmount;    // Amount to reduce the level when dim is on.
+}</code></pre>
 
 <h3 id="label-Constants">Constants</h3>
 
@@ -151,26 +151,26 @@ operations on the structure.</p>
 reading code, the constants VOL_MUTED and VOL_UNMUTED are defined.</p>
 
 <pre class="code ruby"><code class="ruby">// Volume control mute states.
-    VOL_UNMUTED	= 0;
-    VOL_MUTED	= 1;</code></pre>
+VOL_UNMUTED	= 0;
+VOL_MUTED	= 1;</code></pre>
 
 <p>Likewise, the same applies to the level dim state.</p>
 
 <pre class="code ruby"><code class="ruby">// Volume control dim states.
-    VOL_DIM_OFF	= 0;
-    VOL_DIM_ON	= 1;</code></pre>
+VOL_DIM_OFF	= 0;
+VOL_DIM_ON	= 1;</code></pre>
 
 <p>Some of the functions in the volume control library return a status message
 of type sinteger. These codes are mapped to the following constants, with
 failures being negative numbers.</p>
 
 <pre class="code ruby"><code class="ruby">// Function return messages.
-    VOL_SUCCESS		=  0;	// Operation succeded.
-    VOL_FAILED		= -1;	// Generic operation failure.
-    VOL_LIMITED		= -2;	// Input value was limited and may not have reached its
-                            // specified value.
-    VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
-    VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.</code></pre>
+VOL_SUCCESS		=  0;	// Operation succeded.
+VOL_FAILED		= -1;	// Generic operation failure.
+VOL_LIMITED		= -2;	// Input value was limited and may not have reached its
+                        // specified value.
+VOL_PARAM_NOT_SET	= -3;	// Parameter was not set.
+VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.</code></pre>
 
 <h3 id="label-Functions">Functions</h3>
 
@@ -180,23 +180,23 @@ failures being negative numbers.</p>
 before the DEFINE_DEVICE section.</p>
 
 <pre class="code ruby"><code class="ruby">// Include the volume control library.
-    #include &#39;amx-lib-volume&#39;
+#include &#39;amx-lib-volume&#39;
 
-    (***********************************************************)
-    (*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
-    (***********************************************************)
-    DEFINE_DEVICE</code></pre>
+(***********************************************************)
+(*          DEVICE NUMBER DEFINITIONS GO BELOW             *)
+(***********************************************************)
+DEFINE_DEVICE</code></pre>
 
 <h4 id="label-Initializing+A+Control">Initializing A Control</h4>
 
 <p>First, define a variable of type “volume” to act as a volume control.</p>
 
 <pre class="code ruby"><code class="ruby">(***********************************************************)
-    (*               VARIABLE DEFINITIONS GO BELOW             *)
-    (***********************************************************)
-    DEFINE_VARIABLE
-    
-    volume mic1; // Define a volume control.</code></pre>
+(*               VARIABLE DEFINITIONS GO BELOW             *)
+(***********************************************************)
+DEFINE_VARIABLE
+
+volume mic1; // Define a volume control.</code></pre>
 
 <p>Call the helper function volInit() to initialize the control with a level,
 mute state, min limit, max limit, and number of steps between the min and
@@ -204,11 +204,11 @@ max limits. The min, max, and step parameters can be set to 0 if
 they&#39;re not needed.</p>
 
 <pre class="code ruby"><code class="ruby">(***********************************************************)
-    (*                STARTUP CODE GOES BELOW                  *)
-    (***********************************************************)
-    DEFINE_START
+(*                STARTUP CODE GOES BELOW                  *)
+(***********************************************************)
+DEFINE_START
 
-    volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5); // Initialize the volume control.</code></pre>
+volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5); // Initialize the volume control.</code></pre>
 
 <p>Note that although the volume level “0” is passed, the min limit will be
 applied, resulting in an actual initialization level of 10,000.</p>
@@ -223,12 +223,12 @@ zones, etc.</p>
 <p>First, define an array of type “volume”.</p>
 
 <pre class="code ruby"><code class="ruby">(***********************************************************)
-    (*               VARIABLE DEFINITIONS GO BELOW             *)
-    (***********************************************************)
-    DEFINE_VARIABLE
+(*               VARIABLE DEFINITIONS GO BELOW             *)
+(***********************************************************)
+DEFINE_VARIABLE
 
-    // Define a volume control array for the input devices.
-    volume inputs[8];</code></pre>
+// Define a volume control array for the input devices.
+volume inputs[8];</code></pre>
 
 <p>Call the helper function volArrayInit() to initialize all controls in the
 array with a level, mute state, min limit, max limit, and number of steps.
@@ -236,12 +236,12 @@ The min, max, and step parameters can be set to 0 if they&#39;re not
 needed.</p>
 
 <pre class="code ruby"><code class="ruby">(***********************************************************)
-    (*                STARTUP CODE GOES BELOW                  *)
-    (***********************************************************)
-    DEFINE_START
+(*                STARTUP CODE GOES BELOW                  *)
+(***********************************************************)
+DEFINE_START
 
-    // Initialize the array of volume controls.
-    volArrayInit(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);</code></pre>
+// Initialize the array of volume controls.
+volArrayInit(inputs, 0, VOL_UNMUTED, 10000, 20000, 5);</code></pre>
 
 <p>All eight volume controls in the array are now ready for use!</p>
 
@@ -257,7 +257,7 @@ the funtion volGetLevelPostMute(). This can be used for updating an audio
 DSP without having to manage its mute control.</p>
 
 <pre class="code ruby"><code class="ruby">level = volGetLevelPostMute(mic1); // Returns the volume level if unmuted,
-                                       // or 0 if muted.</code></pre>
+                                   // or 0 if muted.</code></pre>
 
 <p>The “…AsByte” functions provide an easy way to scale values down to a range
 of 0-255, which is convenient for updating bar graphs on touch panels.</p>
@@ -304,43 +304,43 @@ volume based on its current level. Here&#39;s an example.</p>
 
 <pre class="code ruby"><code class="ruby">Mic 1 starting level: 10,000
 
-    Remember, the min value 10,000 overrides the level 0 passed during
-    initialization.
+Remember, the min value 10,000 overrides the level 0 passed during
+initialization.
 
-    STEP    VOL LEVEL
-     5 ---- 20,000    MAX
-       |  |
-     4 ---- 18,000
-       |  |
-     3 ---- 16,000
-       |  |
-     2 ---- 14,000
-       |  |
-     1 ---- 12,000
-       |  |
-     0 ---- 10,000    MIN    &lt;-- CURRENT LEVEL
+STEP    VOL LEVEL
+ 5 ---- 20,000    MAX
+   |  |
+ 4 ---- 18,000
+   |  |
+ 3 ---- 16,000
+   |  |
+ 2 ---- 14,000
+   |  |
+ 1 ---- 12,000
+   |  |
+ 0 ---- 10,000    MIN    &lt;-- CURRENT LEVEL
 
 
-    /********************************************************/
+/********************************************************/
 
-    volIncrement(mic1); // Increment mic 1&#39;s volume by 1 step.
+volIncrement(mic1); // Increment mic 1&#39;s volume by 1 step.
 
-    /********************************************************/
+/********************************************************/
 
-    Mic 1 level: 12,000
-    
-    STEP    VOL LEVEL
-     5 ---- 20,000    MAX
-       |  |
-     4 ---- 18,000
-       |  |
-     3 ---- 16,000
-       |  |
-     2 ---- 14,000
-       |  |
-     1 ---- 12,000    &lt;-- CURRENT LEVEL
-       |XX|
-     0 ---- 10,000    MIN</code></pre>
+Mic 1 level: 12,000
+
+STEP    VOL LEVEL
+ 5 ---- 20,000    MAX
+   |  |
+ 4 ---- 18,000
+   |  |
+ 3 ---- 16,000
+   |  |
+ 2 ---- 14,000
+   |  |
+ 1 ---- 12,000    &lt;-- CURRENT LEVEL
+   |XX|
+ 0 ---- 10,000    MIN</code></pre>
 
 <p>After initialization, a control&#39;s step value can be set two ways: 1.
 volSetStep() sets the volume level amount to increase or decrease when
@@ -348,12 +348,12 @@ incremented, or 2. volSetNumberOfSteps() sets the number of steps between
 the min and max limits.</p>
 
 <pre class="code ruby"><code class="ruby">volSetStep(mic1, 2000);     // Level will increase by 2,000 each time
-                                // volIncrement() is called.
+                            // volIncrement() is called.
 
-    /*  OR  */
-    
-    volSetNumberOfSteps(mic1, 5);   // volIncrement() can be called 5 times before
-                                    // the max limit is reached.</code></pre>
+/*  OR  */
+
+volSetNumberOfSteps(mic1, 5);   // volIncrement() can be called 5 times before
+                                // the max limit is reached.</code></pre>
 
 <h4 id="label-Ramping">Ramping</h4>
 
@@ -362,36 +362,36 @@ from <em>PUSH</em> and <em>HOLD</em> events. The higher the number of
 steps, the smoother the level will appear to ramp.</p>
 
 <pre class="code ruby"><code class="ruby">(***********************************************************)
-    (*              VARIABLE DEFINITIONS GO BELOW              *)
-    (***********************************************************)
-    
-    DEFINE_VARIABLE    
-    volume mic1;
-    
-    (***********************************************************)
-    (*                 STARTUP CODE GOES BELOW                 *)
-    (***********************************************************)
-    
-    DEFINE_START
-    volInit(mic1, 0, VOL_UNMUTED, 0, 100, 50);
-    
-    (***********************************************************)
-    (*                   THE EVENTS GO BELOW                   *)
-    (***********************************************************)
-    
-    DEFINE_EVENT
-    BUTTON_EVENT[dvTouchPanel, BTN_VOLUME_UP]
+(*              VARIABLE DEFINITIONS GO BELOW              *)
+(***********************************************************)
+
+DEFINE_VARIABLE    
+volume mic1;
+
+(***********************************************************)
+(*                 STARTUP CODE GOES BELOW                 *)
+(***********************************************************)
+
+DEFINE_START
+volInit(mic1, 0, VOL_UNMUTED, 0, 100, 50);
+
+(***********************************************************)
+(*                   THE EVENTS GO BELOW                   *)
+(***********************************************************)
+
+DEFINE_EVENT
+BUTTON_EVENT[dvTouchPanel, BTN_VOLUME_UP]
+{
+    PUSH:
     {
-        PUSH:
-        {
-            volIncrement(mic1);
-        }
-        
-        HOLD[.5, REPEAT]:
-        {
-            volIncrement(mic1);
-        }
-    }</code></pre>
+        volIncrement(mic1);
+    }
+    
+    HOLD[.5, REPEAT]:
+    {
+        volIncrement(mic1);
+    }
+}</code></pre>
 
 <h4 id="label-Examples">Examples</h4>
 
@@ -399,7 +399,7 @@ steps, the smoother the level will appear to ramp.</p>
 </div></div>
 
     <div id="footer">
-  Generated on Mon Aug  4 17:44:43 2014 by
+  Generated on Wed Aug  6 16:24:09 2014 by
   <a href="http://yardoc.org" title="Yay! A Ruby Documentation Tool" target="_parent">yard</a>
   0.8.7.4 (ruby-2.0.0).
 </div>
