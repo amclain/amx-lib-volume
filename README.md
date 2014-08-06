@@ -42,6 +42,13 @@ Mercurial users can use [Hg-Git](http://hg-git.github.io/) to interact with
 GitHub repositories.
 
 
+## Snake Case Wrapper
+
+A wrapper that converts the library functions to snake case is available
+as `amx-lib-volume-sc.axi`. When using this file, be sure to add the base
+library `amx-lib-volume.axi` to the workspace.
+
+
 ## Usage
 
 ### Conventions
@@ -234,7 +241,7 @@ volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5);
 
 The "5" specifies that there are five steps between the min and max limits, which in this example is a step value of 2000.  The step value is the amount that volIncrement() and volDecrement() increase or decrease a control's volume based on its current level.  Here's an example.
 
-``` c
+``` text
 Mic 1 starting level: 10,000
 
 Remember, the min value 10,000 overrides the level 0 passed during
