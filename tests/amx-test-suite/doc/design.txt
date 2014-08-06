@@ -1,0 +1,18 @@
+DESIGN CONCEPT
+==============
+
+Test suite executes the testSuiteRun() function, which should be
+defined in the user's source code.  User's tests call functions from
+the test suite.
+
+User can interface with the test suite running on a NetLinx master
+through the NetLinx Diagnostic application.
+
+
+ * Event testing.
+
+Use virtual device or intercept device events to be able to run device integration tests.  Preferably something that doesn't have to be switched between production and testing mode.
+
+Include files contain virtual devices that are combined to physical devices in production, or combined to virtual device handlers in testing.  Testing can utilize a queue system to assert events.
+
+Triggered events are added to the testSuiteEventQueue[].  Assertions are added to testSuiteEventAsserts[].  since events are asynchronous, the test harness mainline can compare the assertions to triggered events and respond appropriately.
