@@ -2,7 +2,7 @@
     AMX VOLUME CONTROL LIBRARY
     v0.2.0 RC1
     
-    Website: https://sourceforge.net/projects/amx-lib-volume/
+    Website: https://github.com/amclain/amx-lib-volume
     
     This is a snake case wrapper for the volume control
     library functions. To use this file, make sure to include

@@ -85,7 +85,7 @@ module AMXLibVolume
             f.puts '    AMX VOLUME CONTROL LIBRARY'
             f.puts "    #{File.open(original_file).read.lines[2].strip}" # Version
             f.puts '    '
-            f.puts '    Website: https://sourceforge.net/projects/amx-lib-volume/'
+            f.puts '    Website: https://github.com/amclain/amx-lib-volume'
             f.puts '    '
             f.puts '    This is a snake case wrapper for the volume control'
             f.puts '    library functions. To use this file, make sure to include'

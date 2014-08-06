@@ -2,7 +2,7 @@
     AMX VOLUME CONTROL LIBRARY
     v0.2.0 RC1
 
-    Website: https://sourceforge.net/projects/amx-lib-volume/
+    Website: https://github.com/amclain/amx-lib-volume
     
     
  -- THIS IS A THIRD-PARTY LIBRARY AND IS NOT AFFILIATED WITH --
