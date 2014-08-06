@@ -492,7 +492,7 @@ define_function sinteger volDecrement(volume v)
 /*
  *  Dim the volume level.
  */
-define_function volDimOn(volume v)
+define_function volDim(volume v)
 {
     v.dim = VOL_DIM_ON;
 }
@@ -500,7 +500,7 @@ define_function volDimOn(volume v)
 /*
  *  Undim the volume level, returning it to its "normal" level.
  */
-define_function volDimOff(volume v)
+define_function volUndim(volume v)
 {
     v.dim = VOL_DIM_OFF;
 }
@@ -849,13 +849,13 @@ define_function sinteger volArrayDecrement(volume v[])
 /*
  *  Dim the volume level of all controls in the array.
  */
-define_function volArrayDimOn(volume v[])
+define_function volArrayDim(volume v[])
 {
     integer i;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-        volDimOn(v[i]);
+        volDim(v[i]);
     }
 }
 
@@ -863,13 +863,13 @@ define_function volArrayDimOn(volume v[])
  *  Undim the volume level of all controls in the array,
  *  returning them to their "normal" level.
  */
-define_function volArrayDimOff(volume v[])
+define_function volArrayUndim(volume v[])
 {
     integer i;
     
     for(i = 1; i <= max_length_array(v); i++)
     {
-        volDimOff(v[i]);
+        volUndim(v[i]);
     }
 }
 

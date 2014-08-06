@@ -398,7 +398,7 @@ define_function testVolDim()
     assert(v.dimAmount == 2000, 'Set dim amount.');
     assertEqual(result, VOL_SUCCESS, 'Set dim amount returns success.');
     
-    volDimOn(v);
+    volDim(v);
     assert(volGetLevel(v) == 13000, 'Get dim level.');
     assert(volGetDimState(v) == VOL_DIM_ON, 'Dim state on.');
     
@@ -412,7 +412,7 @@ define_function testVolDim()
     assert(volGetLevel(v) == 0, 'Get dim level, test integer rollover.');
     assertEqual(result, VOL_SUCCESS, 'Set dim amount rollover returns success.');
     
-    volDimOff(v);
+    volUndim(v);
     assert(volGetLevel(v) == 10000, 'Turn level dim off.');
     assert(volGetDimState(v) == VOL_DIM_OFF, 'Dim state off.');
 }
@@ -630,11 +630,11 @@ define_function testVolArrayDim()
     assert(volGetDimAmount(v[6]) == 100, 'Array dim amount set to 100.');
     
     // Dim the array.
-    volArrayDimOn(v);
+    volArrayDim(v);
     assert(volGetLevel(v[7]) == 16900, 'Array dim on.');
     
     // Turn array dim off.
-    volArrayDimOff(v);
+    volArrayUndim(v);
     assert(volGetLevel(v[7]) == 17000, 'Array dim off.');
 }
 

@@ -4,6 +4,8 @@ Release 1.0.0
 * Added volGetTouchPanelLevel() for sending volume on a level to a touch panel.
 * volToggleMute() returns the mute state after toggle.
 * volSetDimAmount() and volSetDimAmountAsByte() return sinteger.
+* Renamed dim functions to volDim() and volUndim() to avoid snake case naming
+    conflicts with constants.
 
 Release 0.2.0 RC1
 -----------------

@@ -262,17 +262,17 @@ define_function sinteger vol_decrement(volume v)
 /*
  *  Dim the volume level.
  */
-define_function vol_dim_on(volume v)
+define_function vol_dim(volume v)
 {
-    volDimOn(v);
+    volDim(v);
 }
 
 /*
  *  Undim the volume level, returning it to its "normal" level.
  */
-define_function vol_dim_off(volume v)
+define_function vol_undim(volume v)
 {
-    volDimOff(v);
+    volUndim(v);
 }
 
 /*
@@ -476,18 +476,18 @@ define_function sinteger vol_array_decrement(volume v[])
 /*
  *  Dim the volume level of all controls in the array.
  */
-define_function vol_array_dim_on(volume v[])
+define_function vol_array_dim(volume v[])
 {
-    volArrayDimOn(v);
+    volArrayDim(v);
 }
 
 /*
  *  Undim the volume level of all controls in the array,
  *  returning them to their "normal" level.
  */
-define_function vol_array_dim_off(volume v[])
+define_function vol_array_undim(volume v[])
 {
-    volArrayDimOff(v);
+    volArrayUndim(v);
 }
 
 /*
