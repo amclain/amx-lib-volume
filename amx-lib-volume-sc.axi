@@ -1,6 +1,6 @@
 (***********************************************************
     AMX VOLUME CONTROL LIBRARY
-    v0.2.0 RC1
+    v1.0.0
     
     Website: https://github.com/amclain/amx-lib-volume
     
