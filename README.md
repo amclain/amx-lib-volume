@@ -53,7 +53,7 @@ library `amx-lib-volume.axi` to the workspace.
 
 ### Conventions
 
-"VOL_" prefixes all library constants, and "vol" prefixes all library functions (without quotes). "volArray" prefixes any functions that operate on an array of structure "volume".
+`VOL_` prefixes all library constants, and `vol` prefixes all library functions. `volArray` prefixes any functions that operate on an array of structure `volume`.
 
 Constants are snake case (underscores separate words) with all uppercase letters.
 
@@ -61,12 +61,14 @@ Function names are camel case with the first letter being lowercase. If using th
 snake case wrapper file, then all function names are snake case with all lowercase
 characters.
 
-Volume levels have a native resolution of 16 bits (integer). The "...AsByte" functions can be applied to convert these levels to 8 bit (char) values.
+Volume levels have a native resolution of 16 bits (integer). The `...AsByte` functions can be applied to convert these levels to 8 bit (char) values.
 
 
 ### Volume Control Structure
 
-All of the data for a volume control is stored in the "volume" structure.  Although it is possible to operate on the structure's properties directly, this method is NOT recommended.  Instead, [helper functions](function-list) are provided to perform operations on the structure.
+All of the data for a volume control is stored in the `volume` structure. These variables
+are considered private and therefore it is ***not*** recommended to access them directly.
+Instead, helper functions are provided to perform operations on the structure.
 
 ``` c
 struct volume
@@ -84,7 +86,7 @@ struct volume
 
 ### Constants
 
-In order to make it easier to distinguish a control's mute state when reading code, the constants VOL_MUTED and VOL_UNMUTED are defined.
+In order to make it easier to distinguish a control's mute state when reading code, the constants `VOL_MUTED` and `VOL_UNMUTED` are defined.
 
 ``` c
 // Volume control mute states.
@@ -100,7 +102,7 @@ VOL_DIM_OFF	= 0;
 VOL_DIM_ON	= 1;
 ```
 
-Some of the functions in the volume control library return a status message of type sinteger.  These codes are mapped to the following constants, with failures being negative numbers.
+Some of the functions in the volume control library return a status message of type `sinteger`.  These codes are mapped to the following constants, with failures being negative numbers.
 
 ``` c
 // Function return messages.
@@ -117,7 +119,7 @@ VOL_OUT_OF_BOUNDS	= -4;	// Index boundry exceeded.
 
 #### Including The Library
 
-To include the volume control library, place the include statement just before the DEFINE_DEVICE section.
+To include the volume control library, place the include statement just before the `DEFINE_DEVICE` section.
 
 ``` c
 // Include the volume control library.
@@ -132,7 +134,7 @@ DEFINE_DEVICE
 
 #### Initializing A Control
 
-First, define a variable of type "volume" to act as a volume control.
+First, define a variable of type `volume` to act as a volume control.
 
 ``` c
 (***********************************************************)
@@ -143,7 +145,7 @@ DEFINE_VARIABLE
 volume mic1; // Define a volume control.
 ```
 
-Call the helper function volInit() to initialize the control with a level, mute state, min limit, max limit, and number of steps between the min and max limits.  The min, max, and step parameters can be set to 0 if they're not needed.
+Call the helper function `volInit()` to initialize the control with a level, mute state, min limit, max limit, and number of steps between the min and max limits.  The min, max, and step parameters can be set to `0` if they're not needed.
 
 ``` c
 (***********************************************************)
@@ -154,14 +156,14 @@ DEFINE_START
 volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5); // Initialize the volume control.
 ```
 
-Note that although the volume level "0" is passed, the min limit will be applied, resulting in an actual initialization level of 10,000.
+Note that although the volume level `0` is passed, the min limit will be applied, resulting in an actual initialization level of `10,000`.
 
 
 #### Initializing An Array Of Controls
 
 Initializing an array of volume controls is just as easy as initializing a single control, as the library contains functions to operate on arrays.  Volume control arrays can be used to group devices, link channels, create zones, etc.
 
-First, define an array of type "volume".
+First, define an array of type `volume`.
 
 ``` c
 (***********************************************************)
@@ -173,7 +175,7 @@ DEFINE_VARIABLE
 volume inputs[8];
 ```
 
-Call the helper function volArrayInit() to initialize all controls in the array with a level, mute state, min limit, max limit, and number of steps.  The min, max, and step parameters can be set to 0 if they're not needed.
+Call the helper function `volArrayInit()` to initialize all controls in the array with a level, mute state, min limit, max limit, and number of steps.  The min, max, and step parameters can be set to `0` if they're not needed.
 
 ``` c
 (***********************************************************)
@@ -190,20 +192,20 @@ All eight volume controls in the array are now ready for use!
 
 #### Getting Volume Levels
 
-To read the level of a volume control, use volGetLevel() or volGetLevelAsByte().  The function takes min/max limits into account.
+To read the level of a volume control, use `volGetLevel()` or `volGetLevelAsByte()`.  The function takes min/max limits into account.
 
 ``` c
 level = volGetLevel(mic1); // Saves the volume level of mic 1 to "level".
 ```
 
-If you want to get the level while taking the mute state into account, use the funtion volGetLevelPostMute(). This can be used for updating an audio DSP without having to manage its mute control.
+If you want to get the level while taking the mute state into account, use the funtion `volGetLevelPostMute()`. This can be used for updating an audio DSP without having to manage its mute control.
 
 ``` c
 level = volGetLevelPostMute(mic1); // Returns the volume level if unmuted,
                                    // or 0 if muted.
 ```
 
-The "...AsByte" functions provide an easy way to scale values down to a range of 0-255, which is convenient for updating bar graphs on touch panels.
+The `...AsByte` functions provide an easy way to scale values down to a range of 0-255, which is convenient for updating bar graphs on touch panels.
 
 ``` c
 send_level dvTouchPanel, LEVEL_MIC_1, volGetLevelAsByte(mic1);
@@ -212,13 +214,13 @@ send_level dvTouchPanel, LEVEL_MIC_1, volGetLevelAsByte(mic1);
 
 #### Setting Volume Levels
 
-Setting a volume level is performed by calling volSetLevel() or volSetLevelAsByte().  This function takes into account min/max limits, but *does not* affect mute status.  This means volume levels can be adjusted while a channel is muted, and the change will be heard once the channel is unmuted.
+Setting a volume level is performed by calling `volSetLevel()` or `volSetLevelAsByte()`.  This function takes into account min/max limits, but *does not* affect mute status.  This means volume levels can be adjusted while a channel is muted, and the change will be heard once the channel is unmuted.
 
 ``` c
 volSetLevel(mic1, 15000); // Set the volume of mic 1 to 15,000.
 ```
 
-Volume levels for all of the controls in an array can also be set by calling volArraySetLevel() or volArraySetLevelAsByte().  This is helpful if you have an array representing linked channels.
+Volume levels for all of the controls in an array can also be set by calling `volArraySetLevel()` or `volArraySetLevelAsByte()`.  This is helpful if you have an array representing linked channels.
 
 ``` c
 volArraySetLevel(inputs, 15000); // Set all levels in the input array to 15,000
@@ -231,7 +233,7 @@ volArraySetLevel(inputs, 15000); // Set all levels in the input array to 15,000
 "It's too loud now!  Set it to nineteen thousand!"
 "Almost there!  How about nineteen thousand and one?  That's it!  Keep it at nineteen thousand and one!"
 
-Ok, so end-users aren't going to be setting volume levels by entering 16-bit integer values.  That's where the volIncrement() and volDecrement() functions come into play.  These functions can be called when a UI control is pressed.
+Ok, so end-users aren't going to be setting volume levels by entering 16-bit integer values.  That's where the `volIncrement()` and `volDecrement()` functions come into play.  These functions can be called when a UI control is pressed.
 
 Let's back up for a second.  Remember the last parameter when initializing a volume control array?
 
@@ -239,7 +241,7 @@ Let's back up for a second.  Remember the last parameter when initializing a vol
 volInit(mic1, 0, VOL_UNMUTED, 10000, 20000, 5);
 ```
 
-The "5" specifies that there are five steps between the min and max limits, which in this example is a step value of 2000.  The step value is the amount that volIncrement() and volDecrement() increase or decrease a control's volume based on its current level.  Here's an example.
+The `5` specifies that there are five steps between the min and max limits, which in this example is a step value of `2000`.  The step value is the amount that `volIncrement()` and `volDecrement()` increase or decrease a control's volume based on its current level.  Here's an example.
 
 ``` text
 Mic 1 starting level: 10,000
@@ -284,8 +286,8 @@ STEP    VOL LEVEL
 ```
 
 After initialization, a control's step value can be set two ways:
-1. volSetStep() sets the volume level amount to increase or decrease when incremented, or
-2. volSetNumberOfSteps() sets the number of steps between the min and max limits.
+1. `volSetStep()` sets the volume level amount to increase or decrease when incremented, or
+2. `volSetNumberOfSteps()` sets the number of steps between the min and max limits.
 
 ``` c
 volSetStep(mic1, 2000);     // Level will increase by 2,000 each time
@@ -300,7 +302,7 @@ volSetNumberOfSteps(mic1, 5);   // volIncrement() can be called 5 times before
 
 #### Ramping
 
-Volume ramping can be achieved by calling volIncrement() and volDecrement() from *PUSH* and *HOLD* events. The higher the number of steps, the smoother the level will appear to ramp.
+Volume ramping can be achieved by calling `volIncrement()` and `volDecrement()` from `PUSH` and `HOLD` events. The higher the number of steps, the smoother the level will appear to ramp.
 
 ``` c
 (***********************************************************)
